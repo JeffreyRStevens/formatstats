@@ -1,4 +1,4 @@
-Package: formatstat
+Package: formatstats
 Title: Format and Print Statistical Output
 Version: 0.0.0.9000
 Authors@R: 
@@ -19,5 +19,5 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     BayesFactor
-URL: https://github.com/JeffreyRStevens/formatstat
-BugReports: https://github.com/JeffreyRStevens/formatstat/issues
+URL: https://github.com/JeffreyRStevens/formatstats
+BugReports: https://github.com/JeffreyRStevens/formatstats/issues

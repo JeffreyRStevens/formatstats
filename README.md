@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# formatstat
+# formatstats
 
 <!-- badges: start -->
 
@@ -10,7 +10,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 <!-- badges: end -->
 
-The goal of formatstat is to provide functions that format statistical
+The goal of formatstats is to provide functions that format statistical
 output in a way that can be inserted into R Markdown documents. This is
 analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
@@ -21,12 +21,12 @@ defaults can be over-ridden.
 
 ## Installation
 
-You can install the development version of formatstat from
+You can install the development version of formatstats from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("JeffreyRStevens/formatstat")
+remotes::install_github("JeffreyRStevens/formatstats")
 ```
 
 ## Example
@@ -35,7 +35,7 @@ For an example, we’ll create a data set from the `beavers1` and
 `beavers2` data sets.
 
 ``` r
-library(formatstat)
+library(formatstats)
 beavers <- merge(beaver1, beaver2, by = "time")
 beavers <- beavers[, c("time", "temp.x", "temp.y")]
 beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
@@ -69,8 +69,8 @@ We can also format things like Bayes factors flexibly:
 
 ## Citation
 
-To cite formatstat, use:
+To cite formatstats, use:
 
-> Stevens, Jeffrey R. (2023). formatstat: Format and print statistical
+> Stevens, Jeffrey R. (2023). formatstats: Format and print statistical
 > output. (version 0.0.0.9000)
-> <https://github.com/JeffreyRStevens/formatstat>
+> <https://github.com/JeffreyRStevens/formatstats>
