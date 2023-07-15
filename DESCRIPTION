@@ -1,0 +1,23 @@
+Package: formatstat
+Title: Format and Print Statistical Output
+Version: 0.0.0.9000
+Authors@R: 
+    person("Jeffrey R.", "Stevens", , "jeffrey.r.stevens@protonmail.com", 
+    role = c("aut", "cre", "cph"),
+    comment = c(ORCID = "0000-0003-2375-1360"))
+Maintainer: Jeffrey R. Stevens <jeffrey.r.stevens@protonmail.com>
+Description: Provides functions that format statistical output in a way that
+    can be inserted into R Markdown documents. This is analogous to the 
+    `apa_print()` functions in the papaja package but prints Markdown
+    or LaTeX syntax.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    BayesFactor
+URL: https://github.com/JeffreyRStevens/formatstat
+BugReports: https://github.com/JeffreyRStevens/formatstat/issues
