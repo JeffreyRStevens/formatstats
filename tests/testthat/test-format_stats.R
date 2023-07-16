@@ -1,0 +1,30 @@
+df <- data.frame(a = 1:10, b = 2:11)
+test_corr <- cor.test(df$a, df$b)
+test_ttest <- t.test(df$a, df$b)
+
+test_that("format_corr works properly", {
+  expect_equal(format_corr(test_corr), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
+  expect_equal(format_corr(test_corr, digits = 3), "_r_(8) = 1.000, 95% CI [1.000, 1.000], _p_ < .001")
+  expect_equal(format_corr(test_corr, pdigits = 2), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < .01")
+  expect_equal(format_corr(test_corr, pzero = TRUE), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < 0.001")
+  expect_equal(format_corr(test_corr, ci = FALSE), "_r_(8) = 1.00, _p_ < .001")
+  expect_equal(format_corr(test_corr, italics = FALSE), "r(8) = 1.00, 95% CI [1.00, 1.00], p < .001")
+  expect_equal(format_corr(test_corr, dfs = "sub"), "_r_~8~ = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
+  expect_equal(format_corr(test_corr, dfs = "none"), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
+  expect_equal(format_corr(test_corr, type = "latex"), "$r$(8) = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
+  expect_equal(format_corr(test_corr, type = "latex", dfs = "sub"), "$r$$_{8}$ = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
+})
+
+
+test_that("format_ttest works properly", {
+  expect_equal(format_ttest(test_ttest), "Mean = -1.0, 95% CI [-3.8,  1.8], _t_(18) = -0.7, _p_ = .470")
+  expect_equal(format_ttest(test_ttest, digits = 2), "Mean = -1.00, 95% CI [-3.84,  1.84], _t_(18) = -0.74, _p_ = .470")
+  expect_equal(format_ttest(test_ttest, pdigits = 2), "Mean = -1.0, 95% CI [-3.8,  1.8], _t_(18) = -0.7, _p_ = .47")
+  expect_equal(format_ttest(test_ttest, pzero = TRUE), "Mean = -1.0, 95% CI [-3.8,  1.8], _t_(18) = -0.7, _p_ = 0.470")
+  expect_equal(format_ttest(test_ttest, full = FALSE), "_t_(18) = -0.7, _p_ = .470")
+  expect_equal(format_ttest(test_ttest, italics = FALSE), "Mean = -1.0, 95% CI [-3.8,  1.8], t(18) = -0.7, p = .470")
+  expect_equal(format_ttest(test_ttest, dfs = "sub"), "Mean = -1.0, 95% CI [-3.8,  1.8], _t_~18~ = -0.7, _p_ = .470")
+  expect_equal(format_ttest(test_ttest, dfs = "none"), "Mean = -1.0, 95% CI [-3.8,  1.8], _t_ = -0.7, _p_ = .470")
+  expect_equal(format_ttest(test_ttest, type = "latex"), "Mean = -1.0, 95% CI [-3.8,  1.8], $t$(18) = -0.7, $p$ = .470")
+  expect_equal(format_ttest(test_ttest, type = "latex", dfs = "sub"), "Mean = -1.0, 95% CI [-3.8,  1.8], $t$$_{18}$ = -0.7, $p$ = .470")
+})
