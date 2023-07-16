@@ -10,7 +10,7 @@
 #' @examples
 #' format_num(pi, digits = 2)
 #' format_num(pi, digits = 4)
-format_num <- function(x, digits) {
+format_num <- function(x, digits = 1) {
   format(x, digits = 1, nsmall = digits)
 }
 
@@ -179,7 +179,9 @@ format_bf <- function(x,
 #' format_scientific(1111)
 #' # Control number of digits after decimal with digits
 #' format_scientific(1111, digits = 3)
-format_scientific <- function(x, digits = 1, type = "md") {
+format_scientific <- function(x,
+                              digits = 1,
+                              type = "md") {
   x <- format(x, digits = digits + 1, nsmall = digits, scientific = TRUE)
   x <- gsub("e\\+00$", "", x)
   if (identical(type, "md")) {

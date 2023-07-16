@@ -41,7 +41,7 @@ beavers <- beavers[, c("time", "temp.x", "temp.y")]
 beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
 ```
 
-Now we can apply the `apa_ttest()` to `beavers_corr` to create a
+Now we can apply the `format_corr()` to `beavers_corr` to create a
 Markdown- formatted character string for the statistical results. We can
 embed this as inline R Markdown code to generate the results.
 

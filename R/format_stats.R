@@ -1,4 +1,4 @@
-#' Print correlation statistics
+#' Format correlation statistics
 #'
 #' @param x Correlation object
 #' @param digits Number of digits after the decimal for means, correlation
@@ -25,15 +25,15 @@
 #' beavers <- beavers[, c("time", "temp.x", "temp.y")]
 #' beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
 #' # Print statistics
-#' apa_corr(beavers_corr)
+#' format_corr(beavers_corr)
 #' # Change digits
-#' apa_corr(beavers_corr, digits = 3)
+#' format_corr(beavers_corr, digits = 3)
 #' # Change cutoff digits for p-value
-#' apa_corr(beavers_corr, pdigits = 2)
+#' format_corr(beavers_corr, pdigits = 2)
 #' # Add leading zero to p-value and don't print confidence intervals
-#' apa_corr(beavers_corr, pzero = TRUE, ci = FALSE)
+#' format_corr(beavers_corr, pzero = TRUE, ci = FALSE)
 
-apa_corr <- function(x,
+format_corr <- function(x,
                      digits = 2,
                      pdigits = 3,
                      pzero = FALSE,
@@ -79,7 +79,7 @@ apa_corr <- function(x,
 }
 
 
-#' Print t-test statistics
+#' Format t-test statistics
 #'
 #' @param x t-test object
 #' @param digits Number of digits after the decimal for means, confidence
@@ -107,14 +107,14 @@ apa_corr <- function(x,
 #' beavers <- beavers[, c("time", "temp.x", "temp.y")]
 #' beavers_tt <- t.test(beavers$temp.x, beavers$temp.y)
 #' # Print statistics
-#' apa_ttest(beavers_tt)
+#' format_ttest(beavers_tt)
 #' # Change digits
-#' apa_ttest(beavers_tt, digits = 2)
+#' format_ttest(beavers_tt, digits = 2)
 #' # Change cutoff digits for p-value
-#' apa_ttest(beavers_tt, pdigits = 2)
+#' format_ttest(beavers_tt, pdigits = 2)
 #' # Add leading zero to p-value and don't print confidence intervals
-#' apa_ttest(beavers_tt, pzero = TRUE, full = FALSE)
-apa_ttest <- function(x,
+#' format_ttest(beavers_tt, pzero = TRUE, full = FALSE)
+format_ttest <- function(x,
                       digits = 1,
                       pdigits = 3,
                       pzero = FALSE,

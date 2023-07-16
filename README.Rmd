@@ -56,18 +56,18 @@ beavers <- beavers[, c("time", "temp.x", "temp.y")]
 beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
 ```
 
-Now we can apply the `apa_ttest()` to `beavers_corr` to create a
+Now we can apply the `format_corr()` to `beavers_corr` to create a
 Markdown- formatted character string for the statistical results. We can
 embed this as inline R Markdown code to generate the results.
 
 #### Code
 
-`` `The temperature for the two beavers was highly correlated (`r apa_corr(beavers_corr, digits = 2)`). ``
+`` `The temperature for the two beavers was highly correlated (`r format_corr(beavers_corr, digits = 2)`). ``
 
 #### Output
 
 The temperature for the two beavers was highly correlated
-(`r apa_corr(beavers_corr, digits = 2)`).
+(`r format_corr(beavers_corr, digits = 2)`).
 
 We can also format things like Bayes factors flexibly:
 
