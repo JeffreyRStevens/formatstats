@@ -10,6 +10,7 @@ test_that("format_p() works properly", {
   expect_equal(format_p(0.0012, pzero = TRUE), "_p_ = 0.001")
   expect_equal(format_p(0.0012, italics = FALSE), "p = .001")
   expect_equal(format_p(0.0012, type = "latex"), "$p$ = .001")
+  suppressMessages(expect_error(format_p(0.0012, type = "xxx"), "Wrong type specified"))
 })
 
 
@@ -18,13 +19,22 @@ test_that("format_bf() works properly", {
   expect_equal(format_bf(123.4567, digits1 = 2), "_BF_~10~ = 123.46")
   expect_equal(format_bf(1234.567), "_BF_~10~ = 1.2×10^3^")
   expect_equal(format_bf(1234.567, cutoff = 1000), "_BF_~10~ > 1000")
+  expect_equal(format_bf(123.4567, cutoff = 1000), "_BF_~10~ = 123.5")
   expect_equal(format_bf(0.1234), "_BF_~10~ = 0.12")
+  expect_equal(format_bf(0.001234, cutoff = 100), "_BF_~10~ < 0.01")
+  expect_equal(format_bf(0.1234, cutoff = 1000), "_BF_~10~ = 0.12")
   expect_equal(format_bf(0.1234, digits2 = 3), "_BF_~10~ = 0.123")
   expect_equal(format_bf(0.1234, italics = FALSE), "BF~10~ = 0.12")
   expect_equal(format_bf(0.1234, subscript = "01"), "_BF_~01~ = 0.12")
   expect_equal(format_bf(0.1234, subscript = ""), "_BF_ = 0.12")
   expect_equal(format_bf(0.1234, type = "latex"), "$BF_{10}$ = 0.12")
   expect_equal(format_bf(0.1234, type = "latex", italics = FALSE), "BF$_{10}$ = 0.12")
+  suppressMessages(expect_error(format_bf("0.0012"), "not numeric or of class BFBayesFactor"))
+  suppressMessages(expect_error(format_bf(0.0012, type = "xxx"), "Wrong type specified"))
+  skip_on_cran()
+  df <- data.frame(a = 1:10, b = c(1,3,2,4,6,5,7,8,10,9))
+  test_corrbf <- BayesFactor::correlationBF(df$a, df$b)
+  expect_equal(format_bf(test_corrbf), "_BF_~10~ = 123.3")
 })
 
 
@@ -33,4 +43,5 @@ test_that("format_scientific() works properly", {
   expect_equal(format_scientific(0.00123, digits = 2), "1.23×10^-3^")
   expect_equal(format_scientific(0.00123, type = "latex"), "1.2 \\times 10^{-3}")
   expect_equal(format_scientific(0.00123, digits = 2, type = "latex"), "1.23 \\times 10^{-3}")
+  suppressMessages(expect_error(format_scientific(0.0012, type = "xxx"), "Wrong type specified"))
 })
