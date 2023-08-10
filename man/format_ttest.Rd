@@ -12,6 +12,7 @@ format_ttest(
   full = TRUE,
   italics = TRUE,
   dfs = "par",
+  mean = "abbr",
   type = "md"
 )
 }
@@ -34,6 +35,8 @@ intervals or just t-statistic and p-value}
 
 \item{dfs}{Formatting for degrees of freedom ("par" = parenthetical,
 "sub" = subscript, "none" = do not print degrees of freedom)}
+
+\item{mean}{Formatting for mean label ("abbr" = M, "word" = Mean)}
 
 \item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
 }

@@ -34,13 +34,13 @@
 #' format_corr(beavers_corr, pzero = TRUE, ci = FALSE)
 
 format_corr <- function(x,
-                     digits = 2,
-                     pdigits = 3,
-                     pzero = FALSE,
-                     ci = TRUE,
-                     italics = TRUE,
-                     dfs = "par",
-                     type = "md") {
+                        digits = 2,
+                        pdigits = 3,
+                        pzero = FALSE,
+                        ci = TRUE,
+                        italics = TRUE,
+                        dfs = "par",
+                        type = "md") {
   # Format numbers
   corr <- format_num(x$estimate, digits = digits)
   cis <- format_num(x$conf.int, digits = digits)
@@ -93,6 +93,7 @@ format_corr <- function(x,
 #' @param italics Logical for whether _p_ label should be italicized or not
 #' @param dfs Formatting for degrees of freedom ("par" = parenthetical,
 #' "sub" = subscript, "none" = do not print degrees of freedom)
+#' @param mean Formatting for mean label ("abbr" = M, "word" = Mean)
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
 #' @return
@@ -115,13 +116,14 @@ format_corr <- function(x,
 #' # Add leading zero to p-value and don't print confidence intervals
 #' format_ttest(beavers_tt, pzero = TRUE, full = FALSE)
 format_ttest <- function(x,
-                      digits = 1,
-                      pdigits = 3,
-                      pzero = FALSE,
-                      full = TRUE,
-                      italics = TRUE,
-                      dfs = "par",
-                      type = "md") {
+                         digits = 1,
+                         pdigits = 3,
+                         pzero = FALSE,
+                         full = TRUE,
+                         italics = TRUE,
+                         dfs = "par",
+                         mean = "abbr",
+                         type = "md") {
   # Format numbers
   if (length(x$estimate) == 2) {
     mean_val <- format_num(x$estimate[1] - x$estimate[2], digits = digits)
@@ -148,7 +150,7 @@ format_ttest <- function(x,
   } else if (!italics) {
     t_lab <- paste0("t")
   } else {
-    stop("Wrong type specified.")
+    stop("Wrong type specified. Should be 'md' or 'latex'.")
   }
   if (identical(dfs, "par")) {
     tlab <- paste0(t_lab, "(", df, ")")
@@ -159,12 +161,27 @@ format_ttest <- function(x,
   } else if (identical(dfs, "none")) {
     tlab <- t_lab
   } else {
-    stop("Wrong dfs type specified.")
+    stop("Wrong dfs type specified. Should be 'par', 'sub', or 'none'.")
   }
 
   # Create statistics string
   if (full) {
-    paste0("Mean = ", mean_val, ", 95% CI [", cis[1], ", ", cis[2], "], ", tlab, " = ", tstat, ", ", pvalue)
+    if (identical(mean, "abbr") & italics & identical(type, "md")) {
+      mean_lab <- "_M_ = "
+    } else if (identical(mean, "abbr") & italics & identical(type, "latex")){
+      mean_lab <- "$M$ = "
+    } else if (identical(mean, "abbr") & !italics){
+      mean_lab <- "M = "
+    } else if (identical(mean, "word") & italics & identical(type, "md")){
+      mean_lab <- "_Mean_ = "
+    } else if (identical(mean, "word") & italics & identical(type, "latex")){
+      mean_lab <- "$Mean$ = "
+    } else if (identical(mean, "word") & !italics){
+      mean_lab <- "Mean = "
+    } else {
+      stop("Wrong mean type specified. Should be 'abbr' or 'word'.")
+    }
+    paste0(mean_lab, mean_val, ", 95% CI [", cis[1], ", ", cis[2], "], ", tlab, " = ", tstat, ", ", pvalue)
   } else {
     paste0(tlab, " = ", tstat, ", ", pvalue)
   }
