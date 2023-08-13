@@ -11,14 +11,18 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/JeffreyRStevens/formatstats/branch/main/graph/badge.svg)](https://app.codecov.io/gh/JeffreyRStevens/formatstats?branch=main)
 <!-- badges: end -->
 
-The goal of formatstats is to provide functions that format statistical
-output in a way that can be inserted into R Markdown documents. This is
-analogous to the
+The goal of formatstats is to provide functions that flexibly format
+statistical output in a way that can be inserted into R Markdown
+documents. This is analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
-functions in the [papaja](https://github.com/crsh/papaja) package but
-can print Markdown or LaTeX syntax. The defaults follow [American
-Psychological Association style](https://apastyle.apa.org/), but some
-defaults can be over-ridden.
+functions in the [papaja](https://github.com/crsh/papaja) package, but
+functions in this package can print Markdown or LaTeX syntax. If your
+output document is a PDF, this doesn’t matter. But if your output
+document is a Word document (as required by many journal publishers),
+Markdown syntax generates editable output instead of an image of output.
+The default style for statistical output follows [American Psychological
+Association style](https://apastyle.apa.org/), but some defaults can be
+over-ridden to flexibly format output.
 
 ## Installation
 
@@ -32,28 +36,38 @@ remotes::install_github("JeffreyRStevens/formatstats")
 
 ## Example
 
-For an example, we’ll create a data set from the `beavers1` and
-`beavers2` data sets.
+For an example, we’ll create a correlation from the `mtcars` data set.
 
 ``` r
 library(formatstats)
-beavers <- merge(beaver1, beaver2, by = "time")
-beavers <- beavers[, c("time", "temp.x", "temp.y")]
-beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
+(cars_corr <- cor.test(mtcars$mpg, mtcars$disp))
+#> 
+#>  Pearson's product-moment correlation
+#> 
+#> data:  mtcars$mpg and mtcars$disp
+#> t = -8.7472, df = 30, p-value = 9.38e-10
+#> alternative hypothesis: true correlation is not equal to 0
+#> 95 percent confidence interval:
+#>  -0.9233594 -0.7081376
+#> sample estimates:
+#>        cor 
+#> -0.8475514
 ```
 
-Now we can apply the `format_corr()` to `beavers_corr` to create a
-Markdown- formatted character string for the statistical results. We can
+Now we can apply the `format_corr()` function to `cars_corr` to create a
+Markdown-formatted character string for the statistical results. We can
 embed this as inline R Markdown code to generate the results.
 
 #### Code
 
-`` `The temperature for the two beavers was highly correlated (_r_(97) = 0.42, 95% CI [0.24, 0.57], _p_ < .001). ``
+`` Fuel efficiency and engine displacement were highly correlated (`r format_corr(cars_corr)`). ``
 
 #### Output
 
-The temperature for the two beavers was highly correlated (*r*(97) =
-0.42, 95% CI \[0.24, 0.57\], *p* \< .001).
+Fuel efficiency and engine displacement were highly correlated (*r*(30)
+= -0.85, 95% CI \[-0.92, -0.71\], *p* \< .001).
+
+#### Other formatting
 
 We can also format things like Bayes factors flexibly:
 
