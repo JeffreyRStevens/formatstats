@@ -12,7 +12,8 @@ format_num(x, digits = 1)
 \item{digits}{Number of digits after the decimal}
 }
 \value{
-A character string formatting the number
+A character string formatting the number with specified number of digits
+after the decimal.
 }
 \description{
 Format numbers

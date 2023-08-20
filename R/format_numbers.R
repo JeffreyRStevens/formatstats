@@ -4,30 +4,38 @@
 #' @param digits Number of digits after the decimal
 #'
 #' @return
-#' A character string formatting the number
+#' A character string formatting the number with specified number of digits
+#' after the decimal.
 #' @export
 #'
 #' @examples
 #' format_num(pi, digits = 2)
 #' format_num(pi, digits = 4)
 format_num <- function(x, digits = 1) {
-  format(x, digits = 1, nsmall = digits)
+  # Check arguments
+  stopifnot("Input must be a numeric vector." = is.numeric(x))
+  stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
+  stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
+
+  # Format number
+  formatC(x, digits = digits, format = "f")
 }
 
 
 #' Format p-values
 #'
 #' @param x Number representing p-value
-#' @param pdigits Number of digits after the decimal for p-values (also controls
-#' cutoff for small p-values)
+#' @param pdigits Number of digits after the decimal for p-values, ranging
+#' between 1-5 (also controls cutoff for small p-values)
 #' @param pzero Logical indicator of whether to include leading zero for
 #' p-values
-#' @param italics Logical for whether _p_ label should be italicized or not
+#' @param italics Logical for whether _p_ label should be italicized
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
 #' @return
 #' A character string that includes _p_ and then the p-value formatted in
-#' Markdown. If p-value is below `pdigits` cutoff, `_p_ < <cutoff>` is used.
+#' Markdown or LaTeX. If p-value is below `pdigits` cutoff, `_p_ < <cutoff>` is
+#' used.
 #' @export
 #'
 #' @examples
@@ -45,30 +53,30 @@ format_p <- function(x,
                      pzero = FALSE,
                      italics = TRUE,
                      type = "md") {
-  cutoff <- as.numeric(paste0("1e-", pdigits))
+  # Check arguments
+  stopifnot("Input must be a numeric vector." = is.numeric(x))
+  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
+  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits > 0)
+  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits < 6)
+  stopifnot("Argument `pzero` must be TRUE or FALSE." = is.logical(pzero))
+  stopifnot("Argument `italics` must be TRUE or FALSE." = is.logical(italics))
+  stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
+
   # Build label
-  if (identical(type, "md") & italics) {
-    p_lab <- paste0("_p_")
-  } else if (identical(type, "latex") & italics) {
-    p_lab <- paste0("$p$")
-  } else if (!italics) {
-    p_lab <- paste0("p")
-  } else {
-    stop("Wrong type specified.")
-  }
+  ## Format p
+  p_lab <- dplyr::case_when(identical(type, "md") & italics ~ paste0("_p_"),
+                            identical(type, "latex") & italics ~ paste0("$p$"),
+                            identical(type, "md") & !italics ~ paste0("p"),
+                            identical(type, "latex") & !italics ~ paste0("p"))
+  ## Determine if using = or <
+  cutoff <- as.numeric(paste0("1e-", pdigits))
   if (x < cutoff) {
-    if (pzero) {
-      minp <- as.numeric(paste0("1e-", pdigits))
-    } else {
-      minp <- sub("0.", ".", as.character(as.numeric(paste0("1e-", pdigits))))
-    }
+    minp <- dplyr::case_when(pzero ~ as.character(as.numeric(paste0("1e-", pdigits))),
+                             !pzero ~ sub("0.", ".", as.character(as.numeric(paste0("1e-", pdigits)))))
     paste0(p_lab, " < ", minp)
   } else {
-    if (pzero) {
-      pvalue <- format_num(x, digits = pdigits)
-    } else {
-      pvalue <- sub("0.", ".", format_num(x, digits = pdigits))
-    }
+    pvalue <- dplyr::case_when(pzero ~ format_num(x, digits = pdigits),
+                               !pzero ~ sub("0.", ".", format_num(x, digits = pdigits)))
     paste0(p_lab, " = ", pvalue)
   }
 }
@@ -80,16 +88,16 @@ format_p <- function(x,
 #' @param digits1 Number of digits after the decimal for Bayes factors > 1
 #' @param digits2 Number of digits after the decimal for Bayes factors < 1
 #' @param cutoff Cutoff for using `_BF_~10~ > <cutoff>` or
-#' `_BF_~10~ < 1 / <cutoff>` (value must be > 0)
-#' @param italics Logical for whether _BF_ label should be italicized or not
+#' `_BF_~10~ < 1 / <cutoff>` (value must be > 1)
+#' @param italics Logical for whether _BF_ label should be italicized
 #' @param subscript Subscript to include with _BF_ label ("10", "01", or "" for
 #' no subscript)
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
 #' @return
 #' A character string that includes _BF_~10~ and then the Bayes factor formatted
-#' in Markdown. If Bayes factor is above or below `cutoff`,
-#' `_BF_~10~ > <cutoff>` or `_BF_~10~ < <cutoff>` is used.
+#' in Markdown or LaTeX. If Bayes factor is above or below `cutoff`,
+#' `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
 #' @export
 #'
 #' @examples
@@ -116,38 +124,36 @@ format_bf <- function(x,
                       italics = TRUE,
                       subscript = "10",
                       type = "md") {
-  # Check if object is numeric, BFBayesFactor, or other
+  # Check arguments
   if (is.numeric(x)) {
     bf <- x
   } else if (inherits(x, what = "BFBayesFactor")) {
     bf <- BayesFactor::extractBF(x)$bf
   } else {
-    stop("Object is not numeric or of class BFBayesFactor.")
+    stop("Input is not numeric or of class BFBayesFactor.")
   }
+  stopifnot("Argument `digits1` must be a non-negative numeric vector." = is.numeric(digits1))
+  stopifnot("Argument `digits1` must be a non-negative numeric vector." = digits1 >= 0)
+  stopifnot("Argument `digits2` must be a non-negative numeric vector." = is.numeric(digits2))
+  stopifnot("Argument `digits2` must be a non-negative numeric vector." = digits2 >= 0)
+  stopifnot("Argument `cutoff` must be a numeric vector greater than 1 or NULL." = (is.numeric(cutoff) & cutoff > 1) | is.null(cutoff))
+  stopifnot("Argument `italics` must be TRUE or FALSE." = is.logical(italics))
+  stopifnot("Argument `subscript` must be a character string (usually '10', '01', or '')." = is.character(subscript))
+  stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
+
   # Build label
-  if (identical(type, "md") & italics) {
-    bf_lab <- paste0("_BF_~", subscript, "~")
-  } else if (identical(type, "md") & !italics) {
-    bf_lab <- paste0("BF~", subscript, "~")
-  } else if (identical(type, "latex") & italics) {
-    bf_lab <- paste0("$BF_{", subscript, "}$")
-  } else if (identical(type, "latex") & !italics) {
-    bf_lab <- paste0("BF$_{", subscript, "}$")
-  } else {
-    stop("Wrong type specified.")
-  }
+  bf_lab <- dplyr::case_when(identical(type, "md") & italics ~ paste0("_BF_~", subscript, "~"),
+                             identical(type, "md") & !italics ~ paste0("BF~", subscript, "~"),
+                             identical(type, "latex") & italics ~ paste0("$BF_{", subscript, "}$"),
+                             identical(type, "latex") & !italics ~ paste0("BF$_{", subscript, "}$"))
   bf_lab <- sub("~~", "", bf_lab)
+
   # Format Bayes factor
   if (is.null(cutoff)) {
-    if (bf > 1000 | bf < 0.001) {
-      bf <- format_scientific(bf, digits = digits1, type = type)
-    } else {
-      if (bf > 1) {
-        bf <- format_num(bf, digits = digits1)
-      } else {
-        bf <- format_num(bf, digits = digits2)
-      }
-    }
+    bf <- dplyr::case_when(bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
+                           bf <= 0.001 ~ format_scientific(bf, digits = digits1, type = type),
+                           bf > 1 ~ format_num(bf, digits = digits1),
+                           bf < 1 ~ format_num(bf, digits = digits2))
     paste0(bf_lab, " = ", bf)
   } else {
     if (bf > cutoff) {
@@ -155,11 +161,8 @@ format_bf <- function(x,
     } else if (bf <  1 / cutoff) {
       paste0(bf_lab, " < ", (1 / cutoff))
     } else {
-      if (bf > 1) {
-        bf <- format_num(bf, digits = digits1)
-      } else {
-        bf <- format_num(bf, digits = digits2)
-      }
+      bf <- dplyr::case_when(bf > 1 ~ format_num(bf, digits = digits1),
+                             .default = format_num(bf, digits = digits2))
       paste0(bf_lab, " = ", bf)
     }
   }
@@ -173,6 +176,7 @@ format_bf <- function(x,
 #'
 #' @return
 #' A character string of a number in scientific notation formatted in Markdown
+#' or LaTeX.
 #' @export
 #'
 #' @examples
@@ -182,16 +186,20 @@ format_bf <- function(x,
 format_scientific <- function(x,
                               digits = 1,
                               type = "md") {
-  x <- format(x, digits = digits + 1, nsmall = digits, scientific = TRUE)
+  # Check arguments
+  stopifnot("Input must be a numeric vector." = is.numeric(x))
+  stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
+  stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
+  stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
+
+  # Format number
+  x <- formatC(x, digits = digits, format = "e")
   x <- gsub("e\\+00$", "", x)
   if (identical(type, "md")) {
     x <- gsub("e\\+0?(\\d+)", "\u00D710^\\1^", x)
-    x <- gsub("e\\-0?(\\d+)", "\u00D710^-\\1^", x)
+    gsub("e\\-0?(\\d+)", "\u00D710^-\\1^", x)
   } else if (identical(type, "latex")) {
     x <- gsub("e\\+0?(\\d+)$", " \\\\times 10\\^\\{\\1\\}", x)
-    x <- gsub("e\\-0?(\\d+)$", " \\\\times 10\\^\\{-\\1\\}", x)
-  } else {
-    stop("Wrong type specified.")
+    gsub("e\\-0?(\\d+)$", " \\\\times 10\\^\\{-\\1\\}", x)
   }
-  x
 }
