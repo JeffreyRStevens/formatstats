@@ -15,6 +15,7 @@ format_scientific(x, digits = 1, type = "md")
 }
 \value{
 A character string of a number in scientific notation formatted in Markdown
+or LaTeX.
 }
 \description{
 Format numbers in scientific notation

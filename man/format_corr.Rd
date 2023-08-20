@@ -18,18 +18,18 @@ format_corr(
 \arguments{
 \item{x}{Correlation object}
 
-\item{digits}{Number of digits after the decimal for means, correlation
-coefficient, confidence intervals, and degrees of freedom}
+\item{digits}{Number of digits after the decimal for means, confidence
+intervals, and correlation coefficients}
 
-\item{pdigits}{Number of digits after the decimal for p-values (also controls
-cutoff for small p-values)}
+\item{pdigits}{Number of digits after the decimal for p-values, ranging
+between 1-5 (also controls cutoff for small p-values)}
 
 \item{pzero}{Logical indicator of whether to include leading zero for
 p-values}
 
 \item{ci}{Logical indicator of whether to print 95\% confidence intervals}
 
-\item{italics}{Logical for whether \emph{p} label should be italicized or not}
+\item{italics}{Logical for whether \emph{p} label should be italicized}
 
 \item{dfs}{Formatting for degrees of freedom ("par" = parenthetical,
 "sub" = subscript, "none" = do not print degrees of freedom)}
@@ -37,24 +37,22 @@ p-values}
 \item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
 }
 \value{
-A character string of statistical information formatted in Markdown.
+A character string of statistical information formatted in Markdown or LaTeX.
 }
 \description{
 Format correlation statistics
 }
 \examples{
 # Prepare data
-beavers <- merge(beaver1, beaver2, by = "time")
-beavers <- beavers[, c("time", "temp.x", "temp.y")]
-beavers_corr <- cor.test(beavers$temp.x, beavers$temp.y)
+mtcars_corr <- cor.test(mtcars$mpg, mtcars$disp)
 # Print statistics
-format_corr(beavers_corr)
+format_corr(mtcars_corr)
 # Change digits
-format_corr(beavers_corr, digits = 3)
+format_corr(mtcars_corr, digits = 3)
 # Change cutoff digits for p-value
-format_corr(beavers_corr, pdigits = 2)
+format_corr(mtcars_corr, pdigits = 2)
 # Add leading zero to p-value and don't print confidence intervals
-format_corr(beavers_corr, pzero = TRUE, ci = FALSE)
+format_corr(mtcars_corr, pzero = TRUE, ci = FALSE)
 }
 \seealso{
 Other functions for printing statistics: 

@@ -9,19 +9,20 @@ format_p(x, pdigits = 3, pzero = FALSE, italics = TRUE, type = "md")
 \arguments{
 \item{x}{Number representing p-value}
 
-\item{pdigits}{Number of digits after the decimal for p-values (also controls
-cutoff for small p-values)}
+\item{pdigits}{Number of digits after the decimal for p-values, ranging
+between 1-5 (also controls cutoff for small p-values)}
 
 \item{pzero}{Logical indicator of whether to include leading zero for
 p-values}
 
-\item{italics}{Logical for whether \emph{p} label should be italicized or not}
+\item{italics}{Logical for whether \emph{p} label should be italicized}
 
 \item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
 }
 \value{
 A character string that includes \emph{p} and then the p-value formatted in
-Markdown. If p-value is below \code{pdigits} cutoff, \verb{_p_ < <cutoff>} is used.
+Markdown or LaTeX. If p-value is below \code{pdigits} cutoff, \verb{_p_ < <cutoff>} is
+used.
 }
 \description{
 Format p-values

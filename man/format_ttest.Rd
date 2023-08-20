@@ -20,10 +20,10 @@ format_ttest(
 \item{x}{t-test object}
 
 \item{digits}{Number of digits after the decimal for means, confidence
-intervals, t-statistic, and degrees of freedom}
+intervals, and t-statistics}
 
-\item{pdigits}{Number of digits after the decimal for p-values (also controls
-cutoff for small p-values)}
+\item{pdigits}{Number of digits after the decimal for p-values, ranging
+between 1-5 (also controls cutoff for small p-values)}
 
 \item{pzero}{Logical indicator of whether to include leading zero for
 p-values}
@@ -31,7 +31,7 @@ p-values}
 \item{full}{Logical indicator of whether to include means and confidence
 intervals or just t-statistic and p-value}
 
-\item{italics}{Logical for whether \emph{p} label should be italicized or not}
+\item{italics}{Logical for whether \emph{p} label should be italicized}
 
 \item{dfs}{Formatting for degrees of freedom ("par" = parenthetical,
 "sub" = subscript, "none" = do not print degrees of freedom)}
@@ -41,24 +41,22 @@ intervals or just t-statistic and p-value}
 \item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
 }
 \value{
-A character string of statistical information formatted in Markdown.
+A character string of statistical information formatted in Markdown or LaTeX.
 }
 \description{
 Format t-test statistics
 }
 \examples{
 # Prepare data
-beavers <- merge(beaver1, beaver2, by = "time")
-beavers <- beavers[, c("time", "temp.x", "temp.y")]
-beavers_tt <- t.test(beavers$temp.x, beavers$temp.y)
+mtcars_tt <- t.test(formula = mtcars$mpg ~ mtcars$vs)
 # Print statistics
-format_ttest(beavers_tt)
+format_ttest(mtcars_tt)
 # Change digits
-format_ttest(beavers_tt, digits = 2)
+format_ttest(mtcars_tt, digits = 2)
 # Change cutoff digits for p-value
-format_ttest(beavers_tt, pdigits = 2)
+format_ttest(mtcars_tt, pdigits = 2)
 # Add leading zero to p-value and don't print confidence intervals
-format_ttest(beavers_tt, pzero = TRUE, full = FALSE)
+format_ttest(mtcars_tt, pzero = TRUE, full = FALSE)
 }
 \seealso{
 Other functions for printing statistics: 

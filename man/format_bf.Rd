@@ -22,9 +22,9 @@ format_bf(
 \item{digits2}{Number of digits after the decimal for Bayes factors < 1}
 
 \item{cutoff}{Cutoff for using \verb{_BF_~10~ > <cutoff>} or
-\verb{_BF_~10~ < 1 / <cutoff>} (value must be > 0)}
+\verb{_BF_~10~ < 1 / <cutoff>} (value must be > 1)}
 
-\item{italics}{Logical for whether \emph{BF} label should be italicized or not}
+\item{italics}{Logical for whether \emph{BF} label should be italicized}
 
 \item{subscript}{Subscript to include with \emph{BF} label ("10", "01", or "" for
 no subscript)}
@@ -33,8 +33,8 @@ no subscript)}
 }
 \value{
 A character string that includes \emph{BF}~10~ and then the Bayes factor formatted
-in Markdown. If Bayes factor is above or below \code{cutoff},
-\verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < <cutoff>} is used.
+in Markdown or LaTeX. If Bayes factor is above or below \code{cutoff},
+\verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < 1 / <cutoff>} is used.
 }
 \description{
 Format Bayes factors
