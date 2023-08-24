@@ -1,0 +1,55 @@
+---
+title: "formatstats"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{formatstats}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(formatstats)
+```
+
+
+## Formatting statistical objects
+
+### Correlations
+
+
+### T-tests
+
+
+## Formatting numbers
+
+### P-values
+
+
+### Bayes factors
+
+| Code | Output |
+|------|--------|
+| `format_bf(4321)`     |  `r format_bf(4321)`      |
+| `format_bf(4321, digits1 = 2)`     | `r format_bf(4321, digits1 = 2)`       |
+| `format_bf(4321, italics = FALSE, subscript = "")`     | `r format_bf(4321, italics = FALSE, subscript = "")`       |
+| `format_bf(4321, cutoff = 1000)`     | `r format_bf(4321, cutoff = 1000)`       |
+|      |        |
+| `format_bf(0.04321)`     | `r format_bf(0.04321)`       |
+| `format_bf(0.04321, digits2 = 3)`     | `r format_bf(0.04321, digits2 = 3)`       |
+| `format_bf(0.04321, cutoff = 10)`     | `r format_bf(0.04321, cutoff = 10)`       |
+
+
+### Scientific notation
+
+
+### Other numbers
+
+
+
