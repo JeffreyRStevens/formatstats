@@ -168,6 +168,61 @@ format_bf <- function(x,
   }
 }
 
+#' Calculate and format mean and confidence interval
+#'
+#' @param x Numeric vector of data to calculate mean and confidence interval
+#' @param values Numeric vector of mean, lower CI, and upper CI to format
+#' @param level Numeric scalar from 0-1 defining width of confidence interval
+#' (defaults to 0.95)
+#' @param digits Number of digits after the decimal for means and confidence
+#' intervals
+#' @param italics Logical for whether _p_ label should be italicized
+#' @param mean Formatting for mean label ("abbr" = M, "word" = Mean)
+#' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
+#'
+#' @return
+#' @export
+#'
+#' @examples
+format_meanci <- function(x = NULL,
+                          values = NULL,
+                          level = 0.95,
+                          digits = 1,
+                          italics = TRUE,
+                          mean = "abbr",
+                          type = "md") {
+  if (!is.null(x)) {
+    stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
+    xmean <- mean(x, na.rm = TRUE)
+    xn <- sum(!is.na(x))
+    stopifnot("Less than two non-missing values in vector, so no confidence interval can be computed." = xn > 1)
+    xlimit <- 1- (1 - level) / 2
+    xsd <- stats::sd(x, na.rm = TRUE)
+    xci <- stats::qt(xlimit, df = (xn - 1)) * xsd/ sqrt(xn)
+    # xci <- ci(x, na.rm = TRUE)
+    xlower <- xmean - xci
+    xupper <-  xmean + xci
+  } else if (!is.null(values)) {
+    stopifnot("Argument `values` must be a numeric vector." = is.numeric(values))
+    stopifnot("Argument `values` must be a vector with three elements." = length(values) == 3)
+    stopifnot("Argument `values` must include the mean followed by the lower CI limit then the upper CI limit." = values[1] >= values[2] & values[1] <= values[3])
+    xmean <- values[1]
+    xlower <- values[2]
+    xupper <- values[3]
+  } else {
+    stop("You must include either the `x` or `values` argument.")
+  }
+  mean_lab <- dplyr::case_when(identical(mean, "abbr") & italics & identical(type, "md") ~ "_M_ = ",
+                               identical(mean, "abbr") & italics & identical(type, "latex") ~ "$M$ = ",
+                               identical(mean, "abbr") & !italics ~ "M = ",
+                               identical(mean, "word") & italics & identical(type, "md") ~ "_Mean_ = ",
+                               identical(mean, "word") & italics & identical(type, "latex") ~ "$Mean$ = ",
+                               identical(mean, "word") & !italics ~ "Mean = ")
+  paste0(mean_lab, format_num(xmean, digits = digits), ", 95% CI [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]")
+
+}
+
+
 #' Format numbers in scientific notation
 #'
 #' @param x Number
