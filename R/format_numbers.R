@@ -176,7 +176,9 @@ format_bf <- function(x,
 #' (defaults to 0.95)
 #' @param digits Number of digits after the decimal for means and confidence
 #' intervals
-#' @param italics Logical for whether _p_ label should be italicized
+#' @param italics Logical for whether mean label should be italicized
+#' @param subscript Character string to include as subscript with mean label
+#' @param cilabel Logical for whether level label (e.g., 95%) should be included
 #' @param mean Formatting for mean label ("abbr" = M, "word" = Mean)
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
@@ -189,6 +191,8 @@ format_meanci <- function(x = NULL,
                           level = 0.95,
                           digits = 1,
                           italics = TRUE,
+                          subscript = NULL,
+                          cilabel = TRUE,
                           mean = "abbr",
                           type = "md") {
   if (!is.null(x)) {
@@ -212,13 +216,25 @@ format_meanci <- function(x = NULL,
   } else {
     stop("You must include either the `x` or `values` argument.")
   }
-  mean_lab <- dplyr::case_when(identical(mean, "abbr") & italics & identical(type, "md") ~ "_M_ = ",
-                               identical(mean, "abbr") & italics & identical(type, "latex") ~ "$M$ = ",
-                               identical(mean, "abbr") & !italics ~ "M = ",
-                               identical(mean, "word") & italics & identical(type, "md") ~ "_Mean_ = ",
-                               identical(mean, "word") & italics & identical(type, "latex") ~ "$Mean$ = ",
-                               identical(mean, "word") & !italics ~ "Mean = ")
-  paste0(mean_lab, format_num(xmean, digits = digits), ", 95% CI [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]")
+  subname <- dplyr::case_when(!is.null(subscript) & identical(type, "md") ~ paste0("~", subscript, "~"),
+                              !is.null(subscript) & identical(type, "latex") ~ paste0("_{", subscript, "}"),
+                              .default = "")
+  mean_lab <- dplyr::case_when(identical(mean, "abbr") & italics & identical(type, "md") ~
+                                 paste0("_M_", subname, " = "),
+                               identical(mean, "abbr") & italics & identical(type, "latex") ~
+                                 paste0("$M", subname, "$ = "),
+                               identical(mean, "abbr") & !italics ~
+                                 paste0("M", subname, " = "),
+                               identical(mean, "word") & italics & identical(type, "md") ~
+                                 paste0("_Mean_", subname, " = "),
+                               identical(mean, "word") & italics & identical(type, "latex") ~
+                                 paste0("$Mean", subname, "$ = "),
+                               identical(mean, "word") & !italics ~
+                                 paste0("Mean", subname, " = "))
+  ci_label <- dplyr::case_when(cilabel ~ paste0(", ", level * 100, "% CI "),
+                               .default = " ")
+
+  paste0(mean_lab, format_num(xmean, digits = digits), ci_label, "[", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]")
 
 }
 
