@@ -29,6 +29,10 @@ library(formatstats)
 
 ## Formatting numbers
 
+### Means and confidence intervals
+
+
+
 ### P-values
 
 

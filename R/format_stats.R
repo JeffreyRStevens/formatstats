@@ -40,7 +40,7 @@ format_corr <- function(x,
                         dfs = "par",
                         type = "md") {
   # Check arguments
-  stopifnot("Input must be a correlation object." = inherits(x, what = "htest"))
+  stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && grepl("correlation", x$method))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
   stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
@@ -121,7 +121,7 @@ format_ttest <- function(x,
                          mean = "abbr",
                          type = "md") {
   # Check arguments
-  stopifnot("Input must be a correlation object." = inherits(x, what = "htest"))
+  stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && grepl("t-test", x$method))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
   stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
