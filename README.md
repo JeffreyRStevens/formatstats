@@ -89,3 +89,8 @@ To cite formatstats, use:
 > Stevens, Jeffrey R. (2023). formatstats: Format and print statistical
 > output. (version 0.0.0.9000)
 > <https://github.com/JeffreyRStevens/formatstats>
+
+## Related packages
+
+- [papaja](https://github.com/crsh/papaja)
+- [apa](https://github.com/dgromer/apa)
