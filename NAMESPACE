@@ -2,7 +2,7 @@
 
 export(format_bf)
 export(format_corr)
-export(format_meanci)
+export(format_mean)
 export(format_num)
 export(format_p)
 export(format_scientific)
