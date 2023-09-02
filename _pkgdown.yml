@@ -1,4 +1,19 @@
 url: https://jeffreyrstevens.github.io/formatstats/
 template:
   bootstrap: 5
+  bootswatch: superhero
+  theme: nord
+
+reference:
+- title: Format numbers
+  contents:
+  - format_num
+  - format_scientific
+- title: Format statistics
+  contents:
+  - format_meanerror
+  - format_p
+  - format_bf
+  - format_corr
+  - format_ttest
 
