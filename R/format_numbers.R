@@ -170,6 +170,17 @@ format_bf <- function(x,
 
 #' Calculate and format mean and error
 #'
+#' `format_meanerror()` is a general function that allows you to either
+#' automatically calculate mean and a measure of error from a data vector or
+#' specify already calculated means and either an error interval or error
+#' limits. Error measures include confidence intervals, standard deviation,
+#' and standard error of the mean. Each of those has a specific function that
+#' formats means and those error measures using APA (7th edition) style. So
+#' `format_meanci()`, `format_meansd()`, and `format_meanse()` are wrappers
+#' around `format_meanerror()` for specific error measures with a default
+#' style. To just format the mean with no error, use `format_mean()`, another
+#' wrapper around `format_meanerror()` that drops the error measure.
+#'
 #' @param x Numeric vector of data to calculate mean and error
 #' @param error Character vector specifying error type ("ci" = confidence
 #' interval, "se" = standard error of the mean, "sd" = standard deviation)
@@ -196,16 +207,22 @@ format_bf <- function(x,
 #'
 #' @examples
 #' # Print mean and 95% confidence limits for fuel efficiency
+#' format_meanci(mtcars$mpg)
+#' # Print mean and standard deviation
+#' format_meansd(mtcars$mpg)
+#' # Print mean and standard error of the mean
+#' format_meanse(mtcars$mpg)
+#' # Print mean
 #' format_mean(mtcars$mpg)
-#' # Print mean and standard error of the mean as interval
-#' format_mean(mtcars$mpg, error = "se", display = "pm")
-#' # Print mean and standard deviation as interval
-#' format_mean(mtcars$mpg, error = "sd", display = "par")
+#' # Print mean and 95% confidence limits with no label for "95% CI"
+#' format_meanci(mtcars$mpg, errorlabel = FALSE)
+#' # Print mean and standard error of the mean as plus/minus interval
+#' format_meanse(mtcars$mpg, error = "se", display = "pm")
 #' # Print mean and 90% confidence limits with units
-#' format_mean(mtcars$mpg, units = "cm", cilevel = 0.9)
-#' # Print two-digit mean with subscript in LaTeX
-#' format_mean(mtcars$mpg, digits = 2, subscript = "control", display = "none", type = "latex")
-format_mean <- function(x = NULL,
+#' format_meanci(mtcars$mpg, units = "cm", cilevel = 0.9)
+#' # Print three-digit mean with subscript in LaTeX
+#' format_meanerror(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
+format_meanerror <- function(x = NULL,
                               error = "ci",
                               values = NULL,
                               digits = 1,
@@ -290,6 +307,69 @@ format_mean <- function(x = NULL,
 
   paste0(full_mean, full_error)
 
+}
+
+#' @rdname format_meanerror
+#' @export
+format_mean <- function(x = NULL,
+                          values = NULL,
+                          digits = 2,
+                          meanlabel = "abbr",
+                          italics = TRUE,
+                          subscript = NULL,
+                          units = NULL,
+                          display = "none",
+                          type = "md") {
+  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+}
+
+#' @rdname format_meanerror
+#' @export
+format_meanci <- function(x = NULL,
+                          error = "ci",
+                          values = NULL,
+                          digits = 2,
+                          meanlabel = "abbr",
+                          italics = TRUE,
+                          subscript = NULL,
+                          units = NULL,
+                          display = "limits",
+                          cilevel = 0.95,
+                          errorlabel = TRUE,
+                          type = "md") {
+  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
+}
+
+#' @rdname format_meanerror
+#' @export
+format_meanse <- function(x = NULL,
+                          error = "se",
+                          values = NULL,
+                          digits = 2,
+                          meanlabel = "abbr",
+                          italics = TRUE,
+                          subscript = NULL,
+                          units = NULL,
+                          display = "par",
+                          errorlabel = TRUE,
+                          type = "md") {
+  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+}
+
+#' @rdname format_meanerror
+#' @export
+format_meansd <- function(x = NULL,
+                          error = "sd",
+                          values = NULL,
+                          digits = 2,
+                          meanlabel = "abbr",
+                          italics = TRUE,
+                          subscript = NULL,
+                          units = NULL,
+                          display = "par",
+                          errorlabel = TRUE,
+                          type = "md") {
+  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 
