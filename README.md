@@ -16,12 +16,12 @@ statistical output in a way that can be inserted into R Markdown
 documents. This is analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 functions in the [papaja](https://github.com/crsh/papaja) package, but
-functions in this package can print Markdown or LaTeX syntax. If your
+functions in formatstats can print Markdown or LaTeX syntax. If your
 output document is a PDF, this doesn’t matter. But if your output
 document is a Word document (as required by many journal publishers),
 Markdown syntax generates editable output instead of an image of output.
 The default style for statistical output follows [American Psychological
-Association style](https://apastyle.apa.org/), but some defaults can be
+Association style](https://apastyle.apa.org/), but many defaults can be
 over-ridden to flexibly format output.
 
 ## Installation
@@ -64,23 +64,38 @@ embed this as inline R Markdown code to generate the results.
 
 #### Output
 
-Fuel efficiency and engine displacement were highly correlated (*r*(30)
-= -0.85, 95% CI \[-0.92, -0.71\], *p* \< .001).
+Fuel efficiency and engine displacement were highly correlated (*r* =
+-0.85, 95% CI \[-0.92, -0.71\], *p* \< .001).
 
-#### Other formatting
+### Control formatting
 
-We can also format things like Bayes factors flexibly:
+We can also alter the output to allow other formatting. For instance, we
+may not like APA’s silly rule to remove leading zeros before a value
+that cannot exceed 1 (like correlations and p-values). And we may not
+want to include the confidence limits around the correlation
+coefficient. Finally, maybe we don’t want the statistics labels to be
+italicized.
 
-| Code                                               | Output                                  |
-|----------------------------------------------------|-----------------------------------------|
-| `format_bf(4321)`                                  | *BF*<sub>10</sub> = 4.3×10<sup>3</sup>  |
-| `format_bf(4321, digits1 = 2)`                     | *BF*<sub>10</sub> = 4.32×10<sup>3</sup> |
-| `format_bf(4321, italics = FALSE, subscript = "")` | BF = 4.3×10<sup>3</sup>                 |
-| `format_bf(4321, cutoff = 1000)`                   | *BF*<sub>10</sub> \> 1000               |
-|                                                    |                                         |
-| `format_bf(0.04321)`                               | *BF*<sub>10</sub> = 0.04                |
-| `format_bf(0.04321, digits2 = 3)`                  | *BF*<sub>10</sub> = 0.043               |
-| `format_bf(0.04321, cutoff = 10)`                  | *BF*<sub>10</sub> \< 0.1                |
+#### Code
+
+`` Fuel efficiency and engine displacement were highly correlated (`r format_corr(cars_corr, pzero = TRUE, ci = FALSE, italics = FALSE)`). ``
+
+#### Output
+
+Fuel efficiency and engine displacement were highly correlated (r =
+-0.85, p \< 0.001).
+
+## Formatting types
+
+- Correlations (output from `cor.test()`, including Pearson’s,
+  Kendall’s, and Spearman’s correlations)
+- T-test (output from `t.test()`)
+- Means and error (calculates from vector or uses vector of mean and
+  error interval or mean, lower error limit, and upper error limit)
+- P-values (scalar number)
+- Bayes factors (output from BayesFactor objects or scalar number)
+- Scientific notation
+- Other numbers
 
 ## Citation
 
@@ -92,5 +107,12 @@ To cite formatstats, use:
 
 ## Related packages
 
-- [papaja](https://github.com/crsh/papaja)
-- [apa](https://github.com/dgromer/apa)
+- [papaja](https://github.com/crsh/papaja) - This package uses the
+  `apa_print()` function to convert a number of R statistical objects
+  into R Markdown output. However, it only outputs LaTeX syntax and only
+  generates APA formatted output with minimal flexibility to alter the
+  output.
+- [apa](https://github.com/dgromer/apa) - This package also converts
+  some R statistical objects to R Markdown output. While it allows other
+  output format such as Markdown, it also only generates APA formatted
+  output with minimal flexibility to alter the output.
