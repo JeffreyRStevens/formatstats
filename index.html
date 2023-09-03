@@ -71,7 +71,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of formatstats is to provide functions that flexibly format statistical output in a way that can be inserted into R Markdown documents. This is analogous to the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a> functions in the <a href="https://github.com/crsh/papaja" class="external-link">papaja</a> package, but functions in this package can print Markdown or LaTeX syntax. If your output document is a PDF, this doesn’t matter. But if your output document is a Word document (as required by many journal publishers), Markdown syntax generates editable output instead of an image of output. The default style for statistical output follows <a href="https://apastyle.apa.org/" class="external-link">American Psychological Association style</a>, but some defaults can be over-ridden to flexibly format output.</p>
+<p>The goal of formatstats is to provide functions that flexibly format statistical output in a way that can be inserted into R Markdown documents. This is analogous to the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a> functions in the <a href="https://github.com/crsh/papaja" class="external-link">papaja</a> package, but functions in formatstats can print Markdown or LaTeX syntax. If your output document is a PDF, this doesn’t matter. But if your output document is a Word document (as required by many journal publishers), Markdown syntax generates editable output instead of an image of output. The default style for statistical output follows <a href="https://apastyle.apa.org/" class="external-link">American Psychological Association style</a>, but many defaults can be over-ridden to flexibly format output.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -107,66 +107,36 @@
 <div class="section level4">
 <h4 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
 </h4>
-<p>Fuel efficiency and engine displacement were highly correlated (<em>r</em>(30) = -0.85, 95% CI [-0.92, -0.71], <em>p</em> &lt; .001).</p>
+<p>Fuel efficiency and engine displacement were highly correlated (<em>r</em> = -0.85, 95% CI [-0.92, -0.71], <em>p</em> &lt; .001).</p>
+</div>
+<div class="section level3">
+<h3 id="control-formatting">Control formatting<a class="anchor" aria-label="anchor" href="#control-formatting"></a>
+</h3>
+<p>We can also alter the output to allow other formatting. For instance, we may not like APA’s silly rule to remove leading zeros before a value that cannot exceed 1 (like correlations and p-values). And we may not want to include the confidence limits around the correlation coefficient. Finally, maybe we don’t want the statistics labels to be italicized.</p>
+<div class="section level4">
+<h4 id="code-1">Code<a class="anchor" aria-label="anchor" href="#code-1"></a>
+</h4>
+<p><code>Fuel efficiency and engine displacement were highly correlated (`r format_corr(cars_corr, pzero = TRUE, ci = FALSE, italics = FALSE)`).</code></p>
 </div>
 <div class="section level4">
-<h4 id="other-formatting">Other formatting<a class="anchor" aria-label="anchor" href="#other-formatting"></a>
+<h4 id="output-1">Output<a class="anchor" aria-label="anchor" href="#output-1"></a>
 </h4>
-<p>We can also format things like Bayes factors flexibly:</p>
-<table class="table">
-<colgroup>
-<col width="55%">
-<col width="44%">
-</colgroup>
-<thead><tr class="header">
-<th>Code</th>
-<th>Output</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>format_bf(4321)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 4.3×10<sup>3</sup>
-</td>
-</tr>
-<tr class="even">
-<td><code>format_bf(4321, digits1 = 2)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 4.32×10<sup>3</sup>
-</td>
-</tr>
-<tr class="odd">
-<td><code>format_bf(4321, italics = FALSE, subscript = "")</code></td>
-<td>BF = 4.3×10<sup>3</sup>
-</td>
-</tr>
-<tr class="even">
-<td><code>format_bf(4321, cutoff = 1000)</code></td>
-<td>
-<em>BF</em><sub>10</sub> &gt; 1000</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code>format_bf(0.04321)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 0.04</td>
-</tr>
-<tr class="odd">
-<td><code>format_bf(0.04321, digits2 = 3)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 0.043</td>
-</tr>
-<tr class="even">
-<td><code>format_bf(0.04321, cutoff = 10)</code></td>
-<td>
-<em>BF</em><sub>10</sub> &lt; 0.1</td>
-</tr>
-</tbody>
-</table>
+<p>Fuel efficiency and engine displacement were highly correlated (r = -0.85, p &lt; 0.001).</p>
 </div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="formatting-types">Formatting types<a class="anchor" aria-label="anchor" href="#formatting-types"></a>
+</h2>
+<ul>
+<li>Correlations (output from <code><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test()</a></code>, including Pearson’s, Kendall’s, and Spearman’s correlations)</li>
+<li>T-test (output from <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code>)</li>
+<li>Means and error (calculates from vector or uses vector of mean and error interval or mean, lower error limit, and upper error limit)</li>
+<li>P-values (scalar number)</li>
+<li>Bayes factors (output from BayesFactor objects or scalar number)</li>
+<li>Scientific notation</li>
+<li>Other numbers</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -180,8 +150,10 @@
 <h2 id="related-packages">Related packages<a class="anchor" aria-label="anchor" href="#related-packages"></a>
 </h2>
 <ul>
-<li><a href="https://github.com/crsh/papaja" class="external-link">papaja</a></li>
-<li><a href="https://github.com/dgromer/apa" class="external-link">apa</a></li>
+<li>
+<a href="https://github.com/crsh/papaja" class="external-link">papaja</a> - This package uses the <code>apa_print()</code> function to convert a number of R statistical objects into R Markdown output. However, it only outputs LaTeX syntax and only generates APA formatted output with minimal flexibility to alter the output.</li>
+<li>
+<a href="https://github.com/dgromer/apa" class="external-link">apa</a> - This package also converts some R statistical objects to R Markdown output. While it allows other output format such as Markdown, it also only generates APA formatted output with minimal flexibility to alter the output.</li>
 </ul>
 </div>
 </div>
