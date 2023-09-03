@@ -19,17 +19,9 @@ library(formatstats)
 ```
 
 
-## Formatting statistical objects
+## Formatting statistics
 
-### Correlations
-
-
-### T-tests
-
-
-## Formatting numbers
-
-### Means and confidence intervals
+### Means and error
 
 
 
@@ -49,6 +41,21 @@ library(formatstats)
 | `format_bf(0.04321, digits2 = 3)`     | `r format_bf(0.04321, digits2 = 3)`       |
 | `format_bf(0.04321, cutoff = 10)`     | `r format_bf(0.04321, cutoff = 10)`       |
 
+
+### Correlations
+
+`r format_corr(cor.test(mtcars$mpg, mtcars$disp, method = "spearman"))`
+
+`r format_corr(cor.test(mtcars$mpg, mtcars$disp, method = "spearman"), italics = FALSE)`
+
+`r format_corr(cor.test(mtcars$mpg, mtcars$disp, method = "kendall"))`
+
+`r format_corr(cor.test(mtcars$mpg, mtcars$disp, method = "kendall"), italics = F)`
+
+### T-tests
+
+
+## Formatting numbers
 
 ### Scientific notation
 

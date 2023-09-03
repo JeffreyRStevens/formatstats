@@ -23,20 +23,17 @@ test_that("format_corr works properly", {
                                 "Argument `ci` must be TRUE or FALSE"))
   suppressMessages(expect_error(format_corr(test_corr, italics = "xxx"),
                                 "Argument `italics` must be TRUE or FALSE"))
-  suppressMessages(expect_error(format_corr(test_corr, dfs = "xxx"),
-                                "Argument `dfs` must be 'par', 'sub', or 'none'"))
   suppressMessages(expect_error(format_corr(test_corr, type = "xxx"),
                                 "Argument `type` must be 'md' or 'latex'"))
-  expect_equal(format_corr(test_corr), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
-  expect_equal(format_corr(test_corr, digits = 3), "_r_(8) = 1.000, 95% CI [1.000, 1.000], _p_ < .001")
-  expect_equal(format_corr(test_corr, pdigits = 2), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < .01")
-  expect_equal(format_corr(test_corr, pzero = TRUE), "_r_(8) = 1.00, 95% CI [1.00, 1.00], _p_ < 0.001")
-  expect_equal(format_corr(test_corr, ci = FALSE), "_r_(8) = 1.00, _p_ < .001")
-  expect_equal(format_corr(test_corr, italics = FALSE), "r(8) = 1.00, 95% CI [1.00, 1.00], p < .001")
-  expect_equal(format_corr(test_corr, dfs = "sub"), "_r_~8~ = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
-  expect_equal(format_corr(test_corr, dfs = "none"), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
-  expect_equal(format_corr(test_corr, type = "latex"), "$r$(8) = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
-  expect_equal(format_corr(test_corr, type = "latex", dfs = "sub"), "$r$$_{8}$ = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
+  expect_equal(format_corr(test_corr), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .001")
+  expect_equal(format_corr(test_corr, digits = 3), "_r_ = 1.000, 95% CI [1.000, 1.000], _p_ < .001")
+  expect_equal(format_corr(test_corr, pdigits = 2), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .01")
+  expect_equal(format_corr(test_corr, pzero = TRUE), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < 0.001")
+  expect_equal(format_corr(test_corr, ci = FALSE), "_r_ = 1.00, _p_ < .001")
+  expect_equal(format_corr(test_corr, italics = FALSE), "r = 1.00, 95% CI [1.00, 1.00], p < .001")
+  expect_equal(format_corr(test_corr, type = "latex"), "$r$ = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
+  expect_equal(format_corr(cor.test(df$a, df$b, method = "kendall")), "_τ_ = 1.00, _p_ < .001")
+  expect_equal(format_corr(cor.test(df$a, df$b, method = "spearman")), "_ρ_ = 1.00, _p_ < .001")
 })
 
 
