@@ -1,5 +1,6 @@
-df <- data.frame(a = 1:10, b = 2:11)
+df <- data.frame(a = 1:10, b = 2:11, c = c(1,8,3,7,8,2,4,1,4,5))
 test_corr <- cor.test(df$a, df$b)
+test_corr2 <- cor.test(df$a, df$c)
 test_ttest1 <- t.test(df$a, mu = 5)
 test_ttest <- t.test(df$a, df$b)
 test_ttest2 <- t.test(df$a, c(df$b, 120))
@@ -29,6 +30,8 @@ test_that("format_corr works properly", {
   expect_equal(format_corr(test_corr, digits = 3), "_r_ = 1.000, 95% CI [1.000, 1.000], _p_ < .001")
   expect_equal(format_corr(test_corr, pdigits = 2), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .01")
   expect_equal(format_corr(test_corr, pzero = TRUE), "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < 0.001")
+  expect_equal(format_corr(test_corr2), "_r_ = -.12, 95% CI [-0.70, 0.55], _p_ = .748")
+  expect_equal(format_corr(test_corr2, pzero = TRUE), "_r_ = -0.12, 95% CI [-0.70, 0.55], _p_ = 0.748")
   expect_equal(format_corr(test_corr, ci = FALSE), "_r_ = 1.00, _p_ < .001")
   expect_equal(format_corr(test_corr, italics = FALSE), "r = 1.00, 95% CI [1.00, 1.00], p < .001")
   expect_equal(format_corr(test_corr, type = "latex"), "$r$ = 1.00, 95% CI [1.00, 1.00], $p$ < .001")
@@ -76,3 +79,106 @@ test_that("format_ttest works properly", {
   expect_equal(format_ttest(test_ttest, type = "latex", dfs = "sub"), "$M$ = -1.0, 95% CI [-3.8, 1.8], $t$$_{18}$ = -0.7, $p$ = .470")
   expect_equal(format_ttest(test_ttest, mean = "word"), "_Mean_ = -1.0, 95% CI [-3.8, 1.8], _t_(18) = -0.7, _p_ = .470")
 })
+
+test_that("format_bf() works properly", {
+  suppressMessages(expect_error(format_bf("0.0012"),
+                                "Input is not numeric or of class BFBayesFactor"))
+  suppressMessages(expect_error(format_bf(123.4567, digits1 = "xxx"),
+                                "Argument `digits1` must be a non-negative numeric vector"))
+  suppressMessages(expect_error(format_bf(123.4567, digits1 = -1),
+                                "Argument `digits1` must be a non-negative numeric vector"))
+  suppressMessages(expect_error(format_bf(123.4567, digits2 = "xxx"),
+                                "Argument `digits2` must be a non-negative numeric vector"))
+  suppressMessages(expect_error(format_bf(123.4567, digits2 = -1),
+                                "Argument `digits2` must be a non-negative numeric vector"))
+  suppressMessages(expect_error(format_bf(123.4567, cutoff = 0.5),
+                                "Argument `cutoff` must be a numeric vector greater than 1 or NULL"))
+  suppressMessages(expect_error(format_bf(123.4567, cutoff = "xxx"),
+                                "Argument `cutoff` must be a numeric vector greater than 1 or NULL"))
+  suppressMessages(expect_error(format_bf(123.4567, italics = "xxx"),
+                                "Argument `italics` must be TRUE or FALSE"))
+  suppressMessages(expect_error(format_bf(123.4567, type = "xxx"),
+                                "Argument `type` must be 'md' or 'latex'"))
+  expect_equal(format_bf(123.4567), "_BF_~10~ = 123.5")
+  expect_equal(format_bf(123.4567, digits1 = 2), "_BF_~10~ = 123.46")
+  expect_equal(format_bf(1234.567), "_BF_~10~ = 1.2×10^3^")
+  expect_equal(format_bf(1234.567, cutoff = 1000), "_BF_~10~ > 1000")
+  expect_equal(format_bf(123.4567, cutoff = 1000), "_BF_~10~ = 123.5")
+  expect_equal(format_bf(0.1234), "_BF_~10~ = 0.12")
+  expect_equal(format_bf(0.001234, cutoff = 100), "_BF_~10~ < 0.01")
+  expect_equal(format_bf(0.1234, cutoff = 1000), "_BF_~10~ = 0.12")
+  expect_equal(format_bf(0.1234, digits2 = 3), "_BF_~10~ = 0.123")
+  expect_equal(format_bf(0.1234, italics = FALSE), "BF~10~ = 0.12")
+  expect_equal(format_bf(0.1234, subscript = "01"), "_BF_~01~ = 0.12")
+  expect_equal(format_bf(0.1234, subscript = ""), "_BF_ = 0.12")
+  expect_equal(format_bf(0.1234, type = "latex"), "$BF_{10}$ = 0.12")
+  expect_equal(format_bf(0.1234, type = "latex", italics = FALSE), "BF$_{10}$ = 0.12")
+  skip_on_cran()
+  df <- data.frame(a = 1:10, b = c(1,3,2,4,6,5,7,8,10,9))
+  test_corrbf <- BayesFactor::correlationBF(df$a, df$b)
+  expect_equal(format_bf(test_corrbf), "_BF_~10~ = 123.3")
+})
+
+test_that("format_p() works properly", {
+  suppressMessages(expect_error(format_p("xxx"),
+                                "Input must be a numeric vector"))
+  suppressMessages(expect_error(format_p(0.0012, pdigits = "xxx"),
+                                "Argument `pdigits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, pdigits = 0),
+                                "Argument `pdigits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, pdigits = 7),
+                                "Argument `pdigits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, pzero = "xxx"),
+                                "Argument `pzero` must be TRUE or FALSE"))
+  suppressMessages(expect_error(format_p(0.0012, italics = "xxx"),
+                                "Argument `italics` must be TRUE or FALSE"))
+  suppressMessages(expect_error(format_p(0.0012, type = "xxx"),
+                                "Argument `type` must be 'md' or 'latex'"))
+  expect_equal(format_p(0.0012), "_p_ = .001")
+  expect_equal(format_p(0.0012, pdigits = 2), "_p_ < .01")
+  expect_equal(format_p(0.0012, pzero = TRUE), "_p_ = 0.001")
+  expect_equal(format_p(0.0012, italics = FALSE), "p = .001")
+  expect_equal(format_p(0.0012, type = "latex"), "$p$ = .001")
+})
+
+test_that("format_meanerror() works properly", {
+  suppressMessages(expect_error(format_meanerror(x = "xxx"),
+                                "Argument `x` must be a numeric vector"))
+  suppressMessages(expect_error(format_meanerror(error = "xxx"),
+                                'You must include either the `x` or `values` argument'))
+  suppressMessages(expect_error(format_meanerror(x = 1:3, error = "xxx"),
+                                'Specify `error` as "ci", "sd", or "se"'))
+  suppressMessages(expect_error(format_meanerror(values = "xxx"),
+                                "Argument `values` must be a numeric vector"))
+  suppressMessages(expect_error(format_meanerror(values = 1:4),
+                                "Argument `values` must be a vector with two or three elements"))
+  suppressMessages(expect_error(format_meanerror(values = c(2, 4, 1)),
+                                "Argument `values` must include the mean followed by the lower CI limit then the upper CI limit"))
+  suppressMessages(expect_error(format_meanerror(x = 1:3, meanlabel = "xxx"),
+                                'Specify `meanlabel` as "abbr", "word", or "none"'))
+  suppressMessages(expect_error(format_meanerror(x = 1:3, units = 2),
+                                "The `units` argument must be a character vector or NULL"))
+  suppressMessages(expect_error(format_meanerror(x = 1:3, display = "xxx"),
+                                'Specify `display` as "limits", "pm", "par", or "none"'))
+  expect_equal(format_meanerror(x = 1:10), "_M_ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(values = c(5.5, 1.2)), "_M_ = 5.5, 95% CI [4.3, 6.7]")
+  expect_equal(format_meanerror(values = c(5.5, 1.2, 7.4)), "_M_ = 5.5, 95% CI [1.2, 7.4]")
+  expect_equal(format_meanerror(x = 1:10, error = "sd"), "_M_ = 5.5, SD [2.5, 8.5]")
+  expect_equal(format_meanerror(x = 1:10, error = "se"), "_M_ = 5.5, SE [4.5, 6.5]")
+  expect_equal(format_meanerror(x = 1:10, digits = 2), "_M_ = 5.50, 95% CI [3.33, 7.67]")
+  expect_equal(format_meanerror(x = 1:10, meanlabel = "word"), "_Mean_ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, meanlabel = "none"), "5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, italics = FALSE), "M = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, subscript = "test"), "_M_~test~ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, units = "cm"), "_M_ = 5.5 cm, 95% CI [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, display = "pm"), "_M_ = 5.5 ± 2.2")
+  expect_equal(format_meanerror(x = 1:10, display = "par"), "_M_ = 5.5 (2.2)")
+  expect_equal(format_meanerror(x = 1:10, cilevel = 0.9), "_M_ = 5.5, 90% CI [3.7, 7.3]")
+  expect_equal(format_meanerror(x = 1:10, errorlabel = FALSE), "_M_ = 5.5, [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, type = "latex"), "$M$ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_mean(x = 1:10), "_M_ = 5.50")
+  expect_equal(format_meanci(x = 1:10), "_M_ = 5.50, 95% CI [3.33, 7.67]")
+  expect_equal(format_meansd(x = 1:10), "_M_ = 5.50 (3.03)")
+  expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (0.96)")
+})
+
