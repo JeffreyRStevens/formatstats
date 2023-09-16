@@ -95,10 +95,10 @@ format_corr <- function(x,
 #' Format t-test statistics
 #'
 #' @description
-#' With `format_ttest()` you can format t-tests generated from `t.test()`
-#' output. The default output is APA formatted, but numbers of digits,
-#' leading zeros, the presence of means and confidence intervals, italics,
-#' degrees of freedom, and mean labels are all customizable.
+#' With `format_ttest()` you can format t-tests generated from `t.test()` and
+#' `wilcox.test()` output. The default output is APA formatted, but numbers of
+#' digits, leading zeros, the presence of means and confidence intervals,
+#' italics, degrees of freedom, and mean labels are all customizable.
 #'
 #' @param x t-test object
 #' @param digits Number of digits after the decimal for means, confidence
@@ -142,7 +142,7 @@ format_ttest <- function(x,
                          mean = "abbr",
                          type = "md") {
   # Check arguments
-  stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && grepl("t-test", x$method))
+  stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && (grepl("t-test", x$method) | grepl("Wilcoxon", x$method)))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
   stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
@@ -156,26 +156,37 @@ format_ttest <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Format numbers
-  if (length(x$estimate) == 2) {
-    mean_val <- format_num(x$estimate[1] - x$estimate[2], digits = digits)
-  } else if (length(x$estimate) == 1) {
-    mean_val <- format_num(x$estimate, digits = digits)
+  ttest_method <- dplyr::case_when(grepl("t-test", x$method) ~ "student",
+                                   grepl("Wilcoxon", x$method) ~ "wilcoxon")
+
+  if (ttest_method == "student") { # format data for Student's t-test
+    if (length(x$estimate) == 2) {
+      mean_val <- format_num(x$estimate[1] - x$estimate[2], digits = digits)
+    } else if (length(x$estimate) == 1) {
+      mean_val <- format_num(x$estimate, digits = digits)
+    }
+    cis <- format_num(x$conf.int, digits = digits)
+    df <- dplyr::case_when(round(x$parameter, 1) == round(x$parameter) ~ format_num(x$parameter, digits = 0),
+                           .default = format_num(x$parameter, digits = digits))
+    statlab <- "t"
+  } else { # format data for Wilcoxon tests
+    full <- FALSE
+    dfs <- "none"
+    df <- ""
+    statlab <- attr(x$statistic, "name")
   }
-  cis <- format_num(x$conf.int, digits = digits)
-  df <- dplyr::case_when(round(x$parameter, 1) == round(x$parameter) ~ format_num(x$parameter, digits = 0),
-                         .default = format_num(x$parameter, digits = digits))
   tstat <- format_num(x$statistic, digits = digits)
   pvalue <- format_p(x$p.value, pdigits = pdigits, pzero = pzero,
                      italics = italics, type = type)
 
   # Build label
-  t_lab <- dplyr::case_when(!italics ~ paste0("t"),
-                            identical(type, "md") ~ paste0("_t_"),
-                            identical(type, "latex") ~ paste0("$t$"))
+  t_lab <- dplyr::case_when(!italics ~ paste0(statlab),
+                            identical(type, "md") ~ paste0("_", statlab, "_"),
+                            identical(type, "latex") ~ paste0("$", statlab, "$"))
   tlab <- dplyr::case_when(identical(dfs, "par") ~ paste0(t_lab, "(", df, ")"),
                            identical(dfs, "sub") & identical(type, "md") ~ paste0(t_lab, "~", df, "~"),
                            identical(dfs, "sub") & identical(type, "latex") ~ paste0(t_lab, "$_{", df, "}$"),
-                           identical(dfs, "none") ~ t_lab)
+                           .default = t_lab)[1]
 
   # Create statistics string
   if (full) {

@@ -4,6 +4,9 @@ test_corr2 <- cor.test(df$a, df$c)
 test_ttest1 <- t.test(df$a, mu = 5)
 test_ttest <- t.test(df$a, df$b)
 test_ttest2 <- t.test(df$a, c(df$b, 120))
+test_ttest3 <- suppressWarnings(wilcox.test(df$a, mu = 5))
+test_ttest4 <- suppressWarnings(wilcox.test(df$a, df$b))
+test_ttest5 <- suppressWarnings(wilcox.test(df$a, c(df$b, 120)))
 
 test_that("format_corr works properly", {
   suppressMessages(expect_error(format_corr("xxx"),
@@ -78,6 +81,9 @@ test_that("format_ttest works properly", {
   expect_equal(format_ttest(test_ttest, type = "latex"), "$M$ = -1.0, 95% CI [-3.8, 1.8], $t$(18) = -0.7, $p$ = .470")
   expect_equal(format_ttest(test_ttest, type = "latex", dfs = "sub"), "$M$ = -1.0, 95% CI [-3.8, 1.8], $t$$_{18}$ = -0.7, $p$ = .470")
   expect_equal(format_ttest(test_ttest, mean = "word"), "_Mean_ = -1.0, 95% CI [-3.8, 1.8], _t_(18) = -0.7, _p_ = .470")
+  suppressMessages(expect_equal(format_ttest(test_ttest3), "_V_ = 27.0, _p_ = .634"))
+                   suppressMessages(expect_equal(format_ttest(test_ttest4), "_W_ = 40.5, _p_ = .495"))
+                                    suppressMessages(expect_equal(format_ttest(test_ttest5), "_W_ = 40.5, _p_ = .323"))
 })
 
 test_that("format_bf() works properly", {

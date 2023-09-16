@@ -44,10 +44,10 @@ intervals or just t-statistic and p-value}
 A character string of statistical information formatted in Markdown or LaTeX.
 }
 \description{
-With \code{format_ttest()} you can format t-tests generated from \code{t.test()}
-output. The default output is APA formatted, but numbers of digits,
-leading zeros, the presence of means and confidence intervals, italics,
-degrees of freedom, and mean labels are all customizable.
+With \code{format_ttest()} you can format t-tests generated from \code{t.test()} and
+\code{wilcox.test()} output. The default output is APA formatted, but numbers of
+digits, leading zeros, the presence of means and confidence intervals,
+italics, degrees of freedom, and mean labels are all customizable.
 }
 \examples{
 # Prepare data
