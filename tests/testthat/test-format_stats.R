@@ -117,7 +117,7 @@ test_that("format_bf() works properly", {
   expect_equal(format_bf(0.1234, italics = FALSE), "BF~10~ = 0.12")
   expect_equal(format_bf(0.1234, subscript = "01"), "_BF_~01~ = 0.12")
   expect_equal(format_bf(0.1234, subscript = ""), "_BF_ = 0.12")
-  expect_equal(format_bf(0.1234, type = "latex"), "$BF_{10}$ = 0.12")
+  expect_equal(format_bf(0.1234, type = "latex"), "$BF$$_{10}$ = 0.12")
   expect_equal(format_bf(0.1234, type = "latex", italics = FALSE), "BF$_{10}$ = 0.12")
   skip_on_cran()
   df <- data.frame(a = 1:10, b = c(1,3,2,4,6,5,7,8,10,9))
@@ -153,7 +153,7 @@ test_that("format_meanerror() works properly", {
   suppressMessages(expect_error(format_meanerror(error = "xxx"),
                                 'You must include either the `x` or `values` argument'))
   suppressMessages(expect_error(format_meanerror(x = 1:3, error = "xxx"),
-                                'Specify `error` as "ci", "sd", or "se"'))
+                                'Specify `error` as "ci", "sd", "se", or "iqr"'))
   suppressMessages(expect_error(format_meanerror(values = "xxx"),
                                 "Argument `values` must be a numeric vector"))
   suppressMessages(expect_error(format_meanerror(values = 1:4),
@@ -169,8 +169,8 @@ test_that("format_meanerror() works properly", {
   expect_equal(format_meanerror(x = 1:10), "_M_ = 5.5, 95% CI [3.3, 7.7]")
   expect_equal(format_meanerror(values = c(5.5, 1.2)), "_M_ = 5.5, 95% CI [4.3, 6.7]")
   expect_equal(format_meanerror(values = c(5.5, 1.2, 7.4)), "_M_ = 5.5, 95% CI [1.2, 7.4]")
-  expect_equal(format_meanerror(x = 1:10, error = "sd"), "_M_ = 5.5, SD [2.5, 8.5]")
-  expect_equal(format_meanerror(x = 1:10, error = "se"), "_M_ = 5.5, SE [4.5, 6.5]")
+  expect_equal(format_meanerror(x = 1:10, error = "sd"), "_M_ = 5.5, _SD_ [2.5, 8.5]")
+  expect_equal(format_meanerror(x = 1:10, error = "se"), "_M_ = 5.5, _SE_ [4.5, 6.5]")
   expect_equal(format_meanerror(x = 1:10, digits = 2), "_M_ = 5.50, 95% CI [3.33, 7.67]")
   expect_equal(format_meanerror(x = 1:10, meanlabel = "word"), "_Mean_ = 5.5, 95% CI [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, meanlabel = "none"), "5.5, 95% CI [3.3, 7.7]")
@@ -178,13 +178,13 @@ test_that("format_meanerror() works properly", {
   expect_equal(format_meanerror(x = 1:10, subscript = "test"), "_M_~test~ = 5.5, 95% CI [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, units = "cm"), "_M_ = 5.5 cm, 95% CI [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, display = "pm"), "_M_ = 5.5 ± 2.2")
-  expect_equal(format_meanerror(x = 1:10, display = "par"), "_M_ = 5.5 (2.2)")
+  expect_equal(format_meanerror(x = 1:10, display = "par"), "_M_ = 5.5 (95% CI = 2.2)")
   expect_equal(format_meanerror(x = 1:10, cilevel = 0.9), "_M_ = 5.5, 90% CI [3.7, 7.3]")
-  expect_equal(format_meanerror(x = 1:10, errorlabel = FALSE), "_M_ = 5.5, [3.3, 7.7]")
+  expect_equal(format_meanerror(x = 1:10, errorlabel = FALSE), "_M_ = 5.5,  [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, type = "latex"), "$M$ = 5.5, 95% CI [3.3, 7.7]")
   expect_equal(format_mean(x = 1:10), "_M_ = 5.50")
   expect_equal(format_meanci(x = 1:10), "_M_ = 5.50, 95% CI [3.33, 7.67]")
-  expect_equal(format_meansd(x = 1:10), "_M_ = 5.50 (3.03)")
-  expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (0.96)")
+  expect_equal(format_meansd(x = 1:10), "_M_ = 5.50 (_SD_ = 3.03)")
+  expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (_SE_ = 0.96)")
 })
 
