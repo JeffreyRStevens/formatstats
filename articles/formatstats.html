@@ -76,12 +76,29 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a></span><span class="op">)</span></span></code></pre></div>
+<p>One of the most useful features of the <a href="https://github.com/crsh/papaja" class="external-link">{papaja}</a> package is the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a>
+function, which takes a statistical object and formats the output to
+print the statistical information inline in R Markdown documents. The
+<code>apa_print()</code> function is an easy way to extract and format
+this statistical information for documents following APA style. However,
+APA style has some rather strange quirks, and users may want some
+flexibility in how their statistics are formatted. Moreover,
+<code>apa_print()</code> uses LaTeX syntax, which works great for PDFs
+but generates images for mathematical symbols when outputting to Word
+documents.</p>
+<p>The <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> package uses APA style as the default,
+but allow more flexible formatting such as including the leading 0
+before numbers with maximum values of 1. It also defaults to using
+Markdown syntax (instead of LaTeX) for easy conversions to Word
+documents.</p>
 <div class="section level2">
 <h2 id="formatting-statistics">Formatting statistics<a class="anchor" aria-label="anchor" href="#formatting-statistics"></a>
 </h2>
 <div class="section level3">
 <h3 id="means-and-error">Means and error<a class="anchor" aria-label="anchor" href="#means-and-error"></a>
 </h3>
+<p>Often, we need to include simple descriptive statistics in our
+documents, such as measures of central tendency and error.</p>
 </div>
 <div class="section level3">
 <h3 id="p-values">P-values<a class="anchor" aria-label="anchor" href="#p-values"></a>
