@@ -11,13 +11,13 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 coverage](https://codecov.io/gh/JeffreyRStevens/formatstats/branch/main/graph/badge.svg)](https://app.codecov.io/gh/JeffreyRStevens/formatstats?branch=main)
 <!-- badges: end -->
 
-The goal of formatstats is to provide functions that flexibly format
+The goal of `{formatstats}` is to provide functions that flexibly format
 statistical output in a way that can be inserted into R Markdown
 documents. This is analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
-functions in the [papaja](https://github.com/crsh/papaja) package, but
-functions in formatstats can print Markdown or LaTeX syntax. If your
-output document is a PDF, this doesn’t matter. But if your output
+functions in the [`{papaja}`](https://github.com/crsh/papaja) package,
+but functions in `{formatstats}` can print Markdown or LaTeX syntax. If
+your output document is a PDF, this doesn’t matter. But if your output
 document is a Word document (as required by many journal publishers),
 Markdown syntax generates editable output instead of an image of output.
 The default style for statistical output follows [American Psychological
@@ -26,7 +26,7 @@ over-ridden to flexibly format output.
 
 ## Installation
 
-You can install the development version of formatstats from
+You can install the development version of `{formatstats}` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -65,7 +65,7 @@ embed this as inline R Markdown code to generate the results.
 #### Output
 
 Fuel efficiency and engine displacement were highly correlated (*r* =
--0.85, 95% CI \[-0.92, -0.71\], *p* \< .001).
+-.85, 95% CI \[-0.92, -0.71\], *p* \< .001).
 
 ### Control formatting
 
@@ -99,7 +99,7 @@ Fuel efficiency and engine displacement were highly correlated (r =
 
 ## Citation
 
-To cite formatstats, use:
+To cite `{formatstats}`, use:
 
 > Stevens, Jeffrey R. (2023). formatstats: Format and print statistical
 > output. (version 0.0.0.9000)
