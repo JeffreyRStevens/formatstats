@@ -6,10 +6,13 @@
 \alias{format_meanci}
 \alias{format_meanse}
 \alias{format_meansd}
+\alias{format_median}
+\alias{format_medianiqr}
 \title{Calculate and format mean and error}
 \usage{
 format_meanerror(
   x = NULL,
+  summary = "mean",
   error = "ci",
   values = NULL,
   digits = 1,
@@ -25,6 +28,7 @@ format_meanerror(
 
 format_mean(
   x = NULL,
+  summary = "mean",
   values = NULL,
   digits = 2,
   meanlabel = "abbr",
@@ -37,6 +41,7 @@ format_mean(
 
 format_meanci(
   x = NULL,
+  summary = "mean",
   error = "ci",
   values = NULL,
   digits = 2,
@@ -52,6 +57,7 @@ format_meanci(
 
 format_meanse(
   x = NULL,
+  summary = "mean",
   error = "se",
   values = NULL,
   digits = 2,
@@ -66,7 +72,36 @@ format_meanse(
 
 format_meansd(
   x = NULL,
+  summary = "mean",
   error = "sd",
+  values = NULL,
+  digits = 2,
+  meanlabel = "abbr",
+  italics = TRUE,
+  subscript = NULL,
+  units = NULL,
+  display = "par",
+  errorlabel = TRUE,
+  type = "md"
+)
+
+format_median(
+  x = NULL,
+  summary = "median",
+  values = NULL,
+  digits = 2,
+  meanlabel = "abbr",
+  italics = TRUE,
+  subscript = NULL,
+  units = NULL,
+  display = "none",
+  type = "md"
+)
+
+format_medianiqr(
+  x = NULL,
+  summary = "median",
+  error = "iqr",
   values = NULL,
   digits = 2,
   meanlabel = "abbr",
@@ -81,8 +116,12 @@ format_meansd(
 \arguments{
 \item{x}{Numeric vector of data to calculate mean and error}
 
+\item{summary}{Character vector specifying summary measure of central
+tendency ("mean" = mean, "median" = median)}
+
 \item{error}{Character vector specifying error type ("ci" = confidence
-interval, "se" = standard error of the mean, "sd" = standard deviation)}
+interval, "se" = standard error of the mean, "sd" = standard deviation, "iqr"
+= interquartile range)}
 
 \item{values}{Numeric vector of mean and interval or mean and lower and upper
 limits}
@@ -116,15 +155,16 @@ To return only the mean (no error), set \code{display = "none"}.
 }
 \description{
 \code{format_meanerror()} is a general function that allows you to either
-automatically calculate mean and a measure of error from a data vector or
-specify already calculated means and either an error interval or error
-limits. Error measures include confidence intervals, standard deviation,
-and standard error of the mean. Each of those has a specific function that
-formats means and those error measures using APA (7th edition) style. So
-\code{format_meanci()}, \code{format_meansd()}, and \code{format_meanse()} are wrappers
-around \code{format_meanerror()} for specific error measures with a default
-style. To just format the mean with no error, use \code{format_mean()}, another
-wrapper around \code{format_meanerror()} that drops the error measure.
+automatically calculate mean/median and a measure of error from a data vector
+or specify already calculated a mean/median and either an error interval or
+error limits. Error measures include confidence intervals, standard
+deviation, and standard error of the mean. Each of those has a specific
+function that formats means and those error measures using APA (7th edition)
+style. So \code{format_meanci()}, \code{format_meansd()}, \code{format_meanse()}, and
+\code{format_medianiqr()} are wrappers around \code{format_meanerror()} for specific
+error measures with a default style. To just format the mean or median with
+no error, use \code{format_mean()} or \code{format_median()}, other wrappers around
+\code{format_meanerror()} that drop the error measure.
 }
 \examples{
 # Print mean and 95\% confidence limits for fuel efficiency

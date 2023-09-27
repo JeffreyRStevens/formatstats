@@ -77,12 +77,9 @@ format_corr <- function(x,
                             !italics & identical(corr_method, "kendall") & identical(type, "latex")~ paste0("\\tau"),
                             !italics & identical(corr_method, "spearman") & identical(type, "md")~ paste0("\u03C1"),
                             !italics & identical(corr_method, "spearman") & identical(type, "latex")~ paste0("\\rho"),
-                            identical(corr_method, "pearson") & identical(type, "md") ~ paste0("_r_"),
-                            identical(corr_method, "pearson") & identical(type, "latex") ~ paste0("$r$"),
-                            identical(corr_method, "kendall") & identical(type, "md") ~ paste0("_\u03C4_"),
-                            identical(corr_method, "kendall") & identical(type, "latex") ~ paste0("$\\tau$"),
-                            identical(corr_method, "spearman") & identical(type, "md") ~ paste0("_\u03C1_"),
-                            identical(corr_method, "spearman") & identical(type, "latex") ~ paste0("$\\rho$"),
+                            identical(corr_method, "pearson") ~ paste0(format_chr("r", italics = italics, type = type)),
+                            identical(corr_method, "kendall") ~ paste0(format_chr("\u03C4", italics = italics, type = type)),
+                            identical(corr_method, "spearman") ~ paste0(format_chr("\u03C1", italics = italics, type = type)),
   )
 
   # Create statistics string
@@ -182,7 +179,8 @@ format_ttest <- function(x,
   # Build label
   t_lab <- dplyr::case_when(!italics ~ paste0(statlab),
                             identical(type, "md") ~ paste0("_", statlab, "_"),
-                            identical(type, "latex") ~ paste0("$", statlab, "$"))
+                            identical(type, "latex") ~ paste0("$", statlab, "$")
+                            )
   tlab <- dplyr::case_when(identical(dfs, "par") ~ paste0(t_lab, "(", df, ")"),
                            identical(dfs, "sub") & identical(type, "md") ~ paste0(t_lab, "~", df, "~"),
                            identical(dfs, "sub") & identical(type, "latex") ~ paste0(t_lab, "$_{", df, "}$"),
@@ -190,12 +188,9 @@ format_ttest <- function(x,
 
   # Create statistics string
   if (full) {
-    mean_lab <- dplyr::case_when(identical(mean, "abbr") & italics & identical(type, "md") ~ "_M_ = ",
-                                 identical(mean, "abbr") & italics & identical(type, "latex") ~ "$M$ = ",
-                                 identical(mean, "abbr") & !italics ~ "M = ",
-                                 identical(mean, "word") & italics & identical(type, "md") ~ "_Mean_ = ",
-                                 identical(mean, "word") & italics & identical(type, "latex") ~ "$Mean$ = ",
-                                 identical(mean, "word") & !italics ~ "Mean = ")
+    mean_lab <- dplyr::case_when(identical(mean, "abbr") ~ paste0(format_chr("M", italics = italics, type = type), " = "),
+                                 identical(mean, "word") ~ paste0(format_chr("Mean", italics = italics, type = type), " = ")
+                                 )
     paste0(mean_lab, mean_val, ", 95% CI [", cis[1], ", ", cis[2], "], ", tlab, " = ", tstat, ", ", pvalue)
   } else {
     paste0(tlab, " = ", tstat, ", ", pvalue)
@@ -274,11 +269,7 @@ format_bf <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Build label
-  bf_lab <- dplyr::case_when(identical(type, "md") & italics ~ paste0("_BF_~", subscript, "~"),
-                             identical(type, "md") & !italics ~ paste0("BF~", subscript, "~"),
-                             identical(type, "latex") & italics ~ paste0("$BF_{", subscript, "}$"),
-                             identical(type, "latex") & !italics ~ paste0("BF$_{", subscript, "}$"))
-  bf_lab <- sub("~~", "", bf_lab)
+  bf_lab <- paste0(format_chr("BF", italics = italics, type = type), format_sub(subscript, type = type))
 
   # Format Bayes factor
   if (is.null(cutoff)) {
@@ -370,19 +361,23 @@ format_p <- function(x,
 #' Calculate and format mean and error
 #'
 #' `format_meanerror()` is a general function that allows you to either
-#' automatically calculate mean and a measure of error from a data vector or
-#' specify already calculated means and either an error interval or error
-#' limits. Error measures include confidence intervals, standard deviation,
-#' and standard error of the mean. Each of those has a specific function that
-#' formats means and those error measures using APA (7th edition) style. So
-#' `format_meanci()`, `format_meansd()`, and `format_meanse()` are wrappers
-#' around `format_meanerror()` for specific error measures with a default
-#' style. To just format the mean with no error, use `format_mean()`, another
-#' wrapper around `format_meanerror()` that drops the error measure.
+#' automatically calculate mean/median and a measure of error from a data vector
+#' or specify already calculated a mean/median and either an error interval or
+#' error limits. Error measures include confidence intervals, standard
+#' deviation, and standard error of the mean. Each of those has a specific
+#' function that formats means and those error measures using APA (7th edition)
+#' style. So `format_meanci()`, `format_meansd()`, `format_meanse()`, and
+#' `format_medianiqr()` are wrappers around `format_meanerror()` for specific
+#' error measures with a default style. To just format the mean or median with
+#' no error, use `format_mean()` or `format_median()`, other wrappers around
+#' `format_meanerror()` that drop the error measure.
 #'
 #' @param x Numeric vector of data to calculate mean and error
+#' @param summary Character vector specifying summary measure of central
+#' tendency ("mean" = mean, "median" = median)
 #' @param error Character vector specifying error type ("ci" = confidence
-#' interval, "se" = standard error of the mean, "sd" = standard deviation)
+#' interval, "se" = standard error of the mean, "sd" = standard deviation, "iqr"
+#' = interquartile range)
 #' @param values Numeric vector of mean and interval or mean and lower and upper
 #' limits
 #' @param digits Number of digits after the decimal for means and error
@@ -422,6 +417,7 @@ format_p <- function(x,
 #' # Print three-digit mean with subscript in LaTeX
 #' format_meanerror(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
 format_meanerror <- function(x = NULL,
+                             summary = "mean",
                              error = "ci",
                              values = NULL,
                              digits = 1,
@@ -436,35 +432,40 @@ format_meanerror <- function(x = NULL,
   # Check arguments
   if (!is.null(x)) {
     stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
-    stopifnot('Specify `error` as "ci", "sd", or "se".' = error %in% c("ci", "sd", "se"))
-    xmean <- mean(x, na.rm = TRUE)
+    stopifnot('Specify `summary` as "mean" or "median".' = summary %in% c("mean", "median"))
+    stopifnot('Specify `error` as "ci", "sd", "se", or "iqr".' = error %in% c("ci", "sd", "se", "iqr"))
+    xsummary <- dplyr::case_when(identical(summary, "mean") ~ mean(x, na.rm = TRUE),
+                                 identical(summary, "median") ~ median(x, na.rm = TRUE))
     xn <- sum(!is.na(x))
     stopifnot("Less than two non-missing values in vector, so no confidence interval can be computed." = xn > 1)
     xlimit <- 1- (1 - cilevel) / 2
     xsd <- stats::sd(x, na.rm = TRUE)
     xse <- xsd / sqrt(xn)
     xci <- stats::qt(xlimit, df = (xn - 1)) * xse
-    xlower <- dplyr::case_when(identical(error, "ci") ~ xmean - xci,
-                               identical(error, "sd") ~ xmean - xsd,
-                               identical(error, "se") ~ xmean - xse)
-    xupper <-  dplyr::case_when(identical(error, "ci") ~ xmean + xci,
-                                identical(error, "sd") ~ xmean + xsd,
-                                identical(error, "se") ~ xmean + xse)
-    xinterval <- xmean - xlower
+    xiqr <- stats::IQR(x)
+    xlower <- dplyr::case_when(identical(error, "ci") ~ xsummary - xci,
+                               identical(error, "sd") ~ xsummary - xsd,
+                               identical(error, "se") ~ xsummary - xse,
+                               identical(error, "iqr") ~ xsummary - xiqr)
+    xupper <-  dplyr::case_when(identical(error, "ci") ~ xsummary + xci,
+                                identical(error, "sd") ~ xsummary + xsd,
+                                identical(error, "se") ~ xsummary + xse,
+                                identical(error, "iqr") ~ xsummary + xiqr)
+    xinterval <- xsummary - xlower
   } else if (!is.null(values)) {
     stopifnot("Argument `values` must be a numeric vector." = is.numeric(values))
     stopifnot("Argument `values` must be a vector with two or three elements." = length(values) %in% c(2, 3))
     if (length(values) == 2) {
-      xmean <- values[1]
+      xsummary <- values[1]
       xinterval <- values[2]
-      xlower <- xmean - xinterval
-      xupper <- xmean + xinterval
+      xlower <- xsummary - xinterval
+      xupper <- xsummary + xinterval
     } else {
       stopifnot("Argument `values` must include the mean followed by the lower CI limit then the upper CI limit." = values[1] >= values[2] & values[1] <= values[3])
-      xmean <- values[1]
+      xsummary <- values[1]
       xlower <- values[2]
       xupper <- values[3]
-      xinterval <- xmean - xlower
+      xinterval <- xsummary - xlower
     }
   } else {
     stop("You must include either the `x` or `values` argument.")
@@ -474,34 +475,30 @@ format_meanerror <- function(x = NULL,
   stopifnot('Specify `display` as "limits", "pm", "par", or "none".' = display %in% c("limits", "pm", "par", "none"))
 
   # Build mean
-  subname <- dplyr::case_when(!is.null(subscript) & identical(type, "md") ~ paste0("~", subscript, "~"),
-                              !is.null(subscript) & identical(type, "latex") ~ paste0("_{", subscript, "}"),
-                              .default = "")
+  # subname <- ifelse(!is.null(subscript), subscript, "")
   unit <- dplyr::case_when(!is.null(units) ~ paste0(" ", units),
                            .default = "")
   mean_lab <- dplyr::case_when(identical(meanlabel, "none") ~ "",
-                               identical(meanlabel, "abbr") & italics & identical(type, "md") ~
-                                 paste0("_M_", subname, " = "),
-                               identical(meanlabel, "abbr") & italics & identical(type, "latex") ~
-                                 paste0("$M", subname, "$ = "),
-                               identical(meanlabel, "abbr") & !italics ~
-                                 paste0("M", subname, " = "),
-                               identical(meanlabel, "word") & italics & identical(type, "md") ~
-                                 paste0("_Mean_", subname, " = "),
-                               identical(meanlabel, "word") & italics & identical(type, "latex") ~
-                                 paste0("$Mean", subname, "$ = "),
-                               identical(meanlabel, "word") & !italics ~
-                                 paste0("Mean", subname, " = "))
-  full_mean <- paste0(mean_lab, format_num(xmean, digits = digits), unit)
+                               identical(summary, "mean") & identical(meanlabel, "abbr") ~
+                                 paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+                               identical(summary, "mean") & identical(meanlabel, "word") ~
+                                 paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+                               identical(summary, "median") & identical(meanlabel, "abbr") ~
+                                 paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+                               identical(summary, "median") & identical(meanlabel, "word") ~
+                                 paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
+                               )
+  full_mean <- paste0(mean_lab, format_num(xsummary, digits = digits), unit)
 
   # Add error
   error_lab <- dplyr::case_when(!errorlabel ~ "",
-                                identical(error, "ci") ~ paste0(cilevel * 100, "% CI "),
-                                identical(error, "sd") ~ paste0("SD "),
-                                identical(error, "se") ~ paste0("SE "))
-  full_error <- dplyr::case_when(identical(display, "limits") ~ paste0(", ", error_lab, "[", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
+                                identical(error, "ci") ~ paste0(cilevel * 100, "% CI"),
+                                identical(error, "sd") ~ paste0(format_chr("SD", italics = italics, type = type)),
+                                identical(error, "se") ~ paste0(format_chr("SE", italics = italics, type = type)),
+                                identical(error, "iqr") ~ paste0(format_chr("IQR", italics = italics, type = type)))
+  full_error <- dplyr::case_when(identical(display, "limits") ~ paste0(", ", error_lab, " [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
                                  identical(display, "pm") ~ paste0(" \u00b1 ", format_num(xinterval, digits = digits)),
-                                 identical(display, "par") ~ paste0(" ", "(", format_num(xinterval, digits = digits), ")"),
+                                 identical(display, "par") ~ paste0(" ", "(", error_lab, " = ", format_num(xinterval, digits = digits), ")"),
                                  .default = "")
 
   paste0(full_mean, full_error)
@@ -511,6 +508,7 @@ format_meanerror <- function(x = NULL,
 #' @rdname format_meanerror
 #' @export
 format_mean <- function(x = NULL,
+                        summary = "mean",
                         values = NULL,
                         digits = 2,
                         meanlabel = "abbr",
@@ -525,6 +523,7 @@ format_mean <- function(x = NULL,
 #' @rdname format_meanerror
 #' @export
 format_meanci <- function(x = NULL,
+                          summary = "mean",
                           error = "ci",
                           values = NULL,
                           digits = 2,
@@ -542,6 +541,7 @@ format_meanci <- function(x = NULL,
 #' @rdname format_meanerror
 #' @export
 format_meanse <- function(x = NULL,
+                          summary = "mean",
                           error = "se",
                           values = NULL,
                           digits = 2,
@@ -558,6 +558,7 @@ format_meanse <- function(x = NULL,
 #' @rdname format_meanerror
 #' @export
 format_meansd <- function(x = NULL,
+                          summary = "mean",
                           error = "sd",
                           values = NULL,
                           digits = 2,
@@ -570,3 +571,36 @@ format_meansd <- function(x = NULL,
                           type = "md") {
   format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
+
+#' @rdname format_meanerror
+#' @export
+format_median <- function(x = NULL,
+                          summary = "median",
+                          values = NULL,
+                          digits = 2,
+                          meanlabel = "abbr",
+                          italics = TRUE,
+                          subscript = NULL,
+                          units = NULL,
+                          display = "none",
+                          type = "md") {
+  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+}
+
+#' @rdname format_meanerror
+#' @export
+format_medianiqr <- function(x = NULL,
+                             summary = "median",
+                             error = "iqr",
+                             values = NULL,
+                             digits = 2,
+                             meanlabel = "abbr",
+                             italics = TRUE,
+                             subscript = NULL,
+                             units = NULL,
+                             display = "par",
+                             errorlabel = TRUE,
+                             type = "md") {
+  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+}
+

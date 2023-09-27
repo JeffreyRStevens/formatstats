@@ -64,3 +64,21 @@ format_scientific <- function(x,
     gsub("e\\-0?(\\d+)$", " \\\\times 10\\^\\{-\\1\\}", x)
   }
 }
+
+format_chr <- function(x,
+                       italics = TRUE,
+                       type = "md") {
+  dplyr::case_when(italics & type == "md" ~ paste0("_", x, "_"),
+                   italics & type == "latex" ~ paste0("$", x, "$"),
+                   !italics ~ x)
+}
+
+
+
+format_sub <- function(subscript = NULL,
+                       type = "md") {
+  dplyr::case_when(subscript == "" ~ "",
+                   !is.null(subscript) & type == "md" ~ paste0("~", subscript, "~"),
+                   !is.null(subscript) & type == "latex" ~ paste0("$_{", subscript, "}$"),
+                   .default = "")
+}
