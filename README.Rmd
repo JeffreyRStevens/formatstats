@@ -87,9 +87,9 @@ Fuel efficiency and engine displacement were highly correlated
 ## Formatting types
 
 * Correlations (output from `cor.test()`, including Pearson's, Kendall's, and Spearman's correlations)
-* T-test (output from `t.test()`)
+* Student t-tests and Wilcoxon rank sum and signed rank tests (output from `t.test()` and `wilcox.test()`, including one-sample, two-sample independent, and paired tests)
 * Means and error (calculates from vector or uses vector of mean and error interval or mean, lower error limit, and upper error limit)
-* P-values (scalar number)
+* P-values
 * Bayes factors (output from BayesFactor objects or scalar number)
 * Scientific notation
 * Other numbers
