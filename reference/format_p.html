@@ -60,7 +60,14 @@ italics are all customizable.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">format_p</span><span class="op">(</span><span class="va">x</span>, pdigits <span class="op">=</span> <span class="fl">3</span>, pzero <span class="op">=</span> <span class="cn">FALSE</span>, italics <span class="op">=</span> <span class="cn">TRUE</span>, type <span class="op">=</span> <span class="st">"md"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">format_p</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  pdigits <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  pzero <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  label <span class="op">=</span> <span class="st">"p"</span>,</span>
+<span>  italics <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"md"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -79,8 +86,14 @@ between 1-5 (also controls cutoff for small p-values)</p></dd>
 p-values</p></dd>
 
 
+<dt>label</dt>
+<dd><p>Character string for label before p value. Default is p.
+Set <code>label = ""</code> to return just the formatted p value with no
+label or operator (<code>=</code>, <code>&lt;</code>, <code>&gt;</code>)</p></dd>
+
+
 <dt>italics</dt>
-<dd><p>Logical for whether <em>p</em> label should be italicized</p></dd>
+<dd><p>Logical for whether label should be italicized (<em>p</em>)</p></dd>
 
 
 <dt>type</dt>
@@ -112,6 +125,9 @@ used.</p>
 <span class="r-in"><span><span class="co"># Include leading zero</span></span></span>
 <span class="r-in"><span><span class="fu">format_p</span><span class="op">(</span><span class="fl">0.001</span>, pzero <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "_p_ = 0.001"</span>
+<span class="r-in"><span><span class="co"># Return only Bayes factor value (no label)</span></span></span>
+<span class="r-in"><span><span class="fu">format_p</span><span class="op">(</span><span class="fl">0.001</span>, label <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ".001"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
