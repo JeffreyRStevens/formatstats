@@ -180,7 +180,7 @@ format_ttest <- function(x,
   t_lab <- dplyr::case_when(!italics ~ paste0(statlab),
                             identical(type, "md") ~ paste0("_", statlab, "_"),
                             identical(type, "latex") ~ paste0("$", statlab, "$")
-                            )
+  )
   tlab <- dplyr::case_when(identical(dfs, "par") ~ paste0(t_lab, "(", df, ")"),
                            identical(dfs, "sub") & identical(type, "md") ~ paste0(t_lab, "~", df, "~"),
                            identical(dfs, "sub") & identical(type, "latex") ~ paste0(t_lab, "$_{", df, "}$"),
@@ -190,7 +190,7 @@ format_ttest <- function(x,
   if (full) {
     mean_lab <- dplyr::case_when(identical(mean, "abbr") ~ paste0(format_chr("M", italics = italics, type = type), " = "),
                                  identical(mean, "word") ~ paste0(format_chr("Mean", italics = italics, type = type), " = ")
-                                 )
+    )
     paste0(mean_lab, mean_val, ", 95% CI [", cis[1], ", ", cis[2], "], ", tlab, " = ", tstat, ", ", pvalue)
   } else {
     paste0(tlab, " = ", tstat, ", ", pvalue)
@@ -214,15 +214,18 @@ format_ttest <- function(x,
 #' @param digits2 Number of digits after the decimal for Bayes factors < 1
 #' @param cutoff Cutoff for using `_BF_~10~ > <cutoff>` or
 #' `_BF_~10~ < 1 / <cutoff>` (value must be > 1)
-#' @param italics Logical for whether _BF_ label should be italicized
-#' @param subscript Subscript to include with _BF_ label ("10", "01", or "" for
-#' no subscript)
-#' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
+#' @param label Character string for label before Bayes factor. Default is BF.
+#' Set `label = ""` to return just the formatted Bayes factor value with no
+#' label or operator (`=`, `<`, `>`)
+#' @param italics Logical for whether label should be italicized (_BF_ or BF)
+#' @param subscript Subscript to include with _BF_ label (`"10"`, `"01"`, or
+#' `""` for no subscript)
+#' @param type Type of formatting (`"md"` = markdown, `"latex"` = LaTeX)
 #'
 #' @return
-#' A character string that includes _BF_~10~ and then the Bayes factor formatted
-#' in Markdown or LaTeX. If Bayes factor is above or below `cutoff`,
-#' `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
+#' A character string that includes label (by default _BF_~10~) and then the
+#' Bayes factor formatted in Markdown or LaTeX. If Bayes factor is above or
+#' below `cutoff`, `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
 #' @export
 #'
 #' @family functions for printing statistical objects
@@ -244,10 +247,13 @@ format_ttest <- function(x,
 #' format_bf(0.111, digits2 = 3)
 #' # Control cutoff for output
 #' format_bf(0.001, cutoff = 100)
+#' # Return only Bayes factor value (no label)
+#' format_bf(12.4444, label = "")
 format_bf <- function(x,
                       digits1 = 1,
                       digits2 = 2,
                       cutoff = NULL,
+                      label = "BF",
                       italics = TRUE,
                       subscript = "10",
                       type = "md") {
@@ -269,7 +275,13 @@ format_bf <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Build label
-  bf_lab <- paste0(format_chr("BF", italics = italics, type = type), format_sub(subscript, type = type))
+  if (label != "") {
+    bf_lab <- paste0(format_chr(label, italics = italics, type = type), format_sub(subscript, type = type))
+    operator <- " = "
+  } else {
+    bf_lab <- ""
+    operator <- ""
+  }
 
   # Format Bayes factor
   if (is.null(cutoff)) {
@@ -277,7 +289,7 @@ format_bf <- function(x,
                            bf <= 0.001 ~ format_scientific(bf, digits = digits1, type = type),
                            bf > 1 ~ format_num(bf, digits = digits1),
                            bf < 1 ~ format_num(bf, digits = digits2))
-    paste0(bf_lab, " = ", bf)
+    paste0(bf_lab, operator, bf)
   } else {
     if (bf > cutoff) {
       paste0(bf_lab, " > ", cutoff)
@@ -286,7 +298,7 @@ format_bf <- function(x,
     } else {
       bf <- dplyr::case_when(bf > 1 ~ format_num(bf, digits = digits1),
                              .default = format_num(bf, digits = digits2))
-      paste0(bf_lab, " = ", bf)
+      paste0(bf_lab, operator, bf)
     }
   }
 }
@@ -305,7 +317,10 @@ format_bf <- function(x,
 #' between 1-5 (also controls cutoff for small p-values)
 #' @param pzero Logical indicator of whether to include leading zero for
 #' p-values
-#' @param italics Logical for whether _p_ label should be italicized
+#' @param label Character string for label before p value. Default is p.
+#' Set `label = ""` to return just the formatted p value with no
+#' label or operator (`=`, `<`, `>`)
+#' @param italics Logical for whether label should be italicized (_p_)
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
 #' @return
@@ -324,9 +339,12 @@ format_bf <- function(x,
 #' format_p(0.0001, pdigits = 2)
 #' # Include leading zero
 #' format_p(0.001, pzero = TRUE)
+#' # Return only Bayes factor value (no label)
+#' format_p(0.001, label = "")
 format_p <- function(x,
                      pdigits = 3,
                      pzero = FALSE,
+                     label = "p",
                      italics = TRUE,
                      type = "md") {
   # Check arguments
@@ -339,11 +357,14 @@ format_p <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Build label
-  ## Format p
-  p_lab <- dplyr::case_when(identical(type, "md") & italics ~ paste0("_p_"),
-                            identical(type, "latex") & italics ~ paste0("$p$"),
-                            identical(type, "md") & !italics ~ paste0("p"),
-                            identical(type, "latex") & !italics ~ paste0("p"))
+  if (label != "") {
+    p_lab <- paste0(format_chr(label, italics = italics, type = type))
+    operator <- " = "
+  } else {
+    p_lab <- ""
+    operator <- ""
+  }
+  # Build label
   ## Determine if using = or <
   cutoff <- as.numeric(paste0("1e-", pdigits))
   if (x < cutoff) {
@@ -353,7 +374,7 @@ format_p <- function(x,
   } else {
     pvalue <- dplyr::case_when(pzero ~ format_num(x, digits = pdigits),
                                !pzero ~ sub("0\\.", "\\.", format_num(x, digits = pdigits)))
-    paste0(p_lab, " = ", pvalue)
+    paste0(p_lab, operator, pvalue)
   }
 }
 
@@ -487,7 +508,7 @@ format_meanerror <- function(x = NULL,
                                  paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
                                identical(summary, "median") & identical(meanlabel, "word") ~
                                  paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
-                               )
+  )
   full_mean <- paste0(mean_lab, format_num(xsummary, digits = digits), unit)
 
   # Add error

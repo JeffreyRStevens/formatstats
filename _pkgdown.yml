@@ -17,3 +17,6 @@ reference:
   - format_corr
   - format_ttest
 
+authors: 
+  Jeffrey R. Stevens:
+    href: https://jeffreyrstevens.quarto.pub/

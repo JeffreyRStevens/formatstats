@@ -4,7 +4,14 @@
 \alias{format_p}
 \title{Format p-values}
 \usage{
-format_p(x, pdigits = 3, pzero = FALSE, italics = TRUE, type = "md")
+format_p(
+  x,
+  pdigits = 3,
+  pzero = FALSE,
+  label = "p",
+  italics = TRUE,
+  type = "md"
+)
 }
 \arguments{
 \item{x}{Number representing p-value}
@@ -15,7 +22,11 @@ between 1-5 (also controls cutoff for small p-values)}
 \item{pzero}{Logical indicator of whether to include leading zero for
 p-values}
 
-\item{italics}{Logical for whether \emph{p} label should be italicized}
+\item{label}{Character string for label before p value. Default is p.
+Set \code{label = ""} to return just the formatted p value with no
+label or operator (\code{=}, \code{<}, \code{>})}
+
+\item{italics}{Logical for whether label should be italicized (\emph{p})}
 
 \item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
 }
@@ -40,4 +51,6 @@ format_p(0.0001)
 format_p(0.0001, pdigits = 2)
 # Include leading zero
 format_p(0.001, pzero = TRUE)
+# Return only Bayes factor value (no label)
+format_p(0.001, label = "")
 }

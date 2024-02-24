@@ -9,6 +9,7 @@ format_bf(
   digits1 = 1,
   digits2 = 2,
   cutoff = NULL,
+  label = "BF",
   italics = TRUE,
   subscript = "10",
   type = "md"
@@ -24,17 +25,21 @@ format_bf(
 \item{cutoff}{Cutoff for using \verb{_BF_~10~ > <cutoff>} or
 \verb{_BF_~10~ < 1 / <cutoff>} (value must be > 1)}
 
-\item{italics}{Logical for whether \emph{BF} label should be italicized}
+\item{label}{Character string for label before Bayes factor. Default is BF.
+Set \code{label = ""} to return just the formatted Bayes factor value with no
+label or operator (\code{=}, \code{<}, \code{>})}
 
-\item{subscript}{Subscript to include with \emph{BF} label ("10", "01", or "" for
-no subscript)}
+\item{italics}{Logical for whether label should be italicized (\emph{BF} or BF)}
 
-\item{type}{Type of formatting ("md" = markdown, "latex" = LaTeX)}
+\item{subscript}{Subscript to include with \emph{BF} label (\code{"10"}, \code{"01"}, or
+\code{""} for no subscript)}
+
+\item{type}{Type of formatting (\code{"md"} = markdown, \code{"latex"} = LaTeX)}
 }
 \value{
-A character string that includes \emph{BF}~10~ and then the Bayes factor formatted
-in Markdown or LaTeX. If Bayes factor is above or below \code{cutoff},
-\verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < 1 / <cutoff>} is used.
+A character string that includes label (by default \emph{BF}~10~) and then the
+Bayes factor formatted in Markdown or LaTeX. If Bayes factor is above or
+below \code{cutoff}, \verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < 1 / <cutoff>} is used.
 }
 \description{
 \code{format_bf()} can input either a \link{BayesFactor} object or a vectors of Bayes
@@ -62,6 +67,8 @@ format_bf(0.0001)
 format_bf(0.111, digits2 = 3)
 # Control cutoff for output
 format_bf(0.001, cutoff = 100)
+# Return only Bayes factor value (no label)
+format_bf(12.4444, label = "")
 }
 \seealso{
 Other functions for printing statistical objects: 
