@@ -285,22 +285,28 @@ format_bf <- function(x,
 
   # Format Bayes factor
   if (is.null(cutoff)) {
-    bf <- dplyr::case_when(bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
-                           bf <= 0.001 ~ format_scientific(bf, digits = digits1, type = type),
-                           bf > 1 ~ format_num(bf, digits = digits1),
-                           bf < 1 ~ format_num(bf, digits = digits2))
-    paste0(bf_lab, operator, bf)
+    bf_value <- dplyr::case_when(
+      bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
+      bf <= 1 / 10 ^ digits2 ~ format_scientific(bf, digits = digits1, type = type),
+      bf >= 1 ~ format_num(bf, digits = digits1),
+      bf < 1 ~ format_num(bf, digits = digits2)
+    )
   } else {
-    if (bf > cutoff) {
-      paste0(bf_lab, " > ", cutoff)
-    } else if (bf <  1 / cutoff) {
-      paste0(bf_lab, " < ", (1 / cutoff))
-    } else {
-      bf <- dplyr::case_when(bf > 1 ~ format_num(bf, digits = digits1),
-                             .default = format_num(bf, digits = digits2))
-      paste0(bf_lab, operator, bf)
-    }
+    bf_value <- dplyr::case_when(
+      bf >= cutoff ~ as.character(cutoff),
+      bf <= 1 / cutoff ~ as.character(1 / cutoff),
+      bf <= 1 / 10 ^ digits2 ~ as.character(1 / 10 ^ digits2),
+      bf >= 1 & bf <= cutoff ~ format_num(bf, digits = digits1),
+      bf < 1 & bf >= 1 / cutoff ~ format_num(bf, digits = digits2)
+    )
+    operator <- dplyr::case_when(
+      bf > cutoff ~ " > ",
+      bf < 1 / cutoff ~ " < ",
+      bf < 1 / 1 / 10 ^ digits2 ~ " < ",
+      .default = operator
+    )
   }
+  paste0(bf_lab, operator, bf_value)
 }
 
 
@@ -367,15 +373,15 @@ format_p <- function(x,
   # Build label
   ## Determine if using = or <
   cutoff <- as.numeric(paste0("1e-", pdigits))
-  if (x < cutoff) {
-    minp <- dplyr::case_when(pzero ~ as.character(as.numeric(paste0("1e-", pdigits))),
-                             !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", pdigits)))))
-    paste0(p_lab, " < ", minp)
-  } else {
-    pvalue <- dplyr::case_when(pzero ~ format_num(x, digits = pdigits),
-                               !pzero ~ sub("0\\.", "\\.", format_num(x, digits = pdigits)))
-    paste0(p_lab, operator, pvalue)
-  }
+  operator <- ifelse(label != "" & x < cutoff, " < ", operator)
+  ## Format pvalue
+  pvalue <- dplyr::case_when(
+    x < cutoff & pzero ~ as.character(as.numeric(paste0("1e-", pdigits))),
+    x < cutoff & !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", pdigits)))),
+    x >= cutoff & pzero ~ format_num(x, digits = pdigits),
+    x >= cutoff & !pzero ~ sub("0\\.", "\\.", format_num(x, digits = pdigits))
+  )
+  paste0(p_lab, operator, pvalue)
 }
 
 
@@ -455,8 +461,10 @@ format_meanerror <- function(x = NULL,
     stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
     stopifnot('Specify `summary` as "mean" or "median".' = summary %in% c("mean", "median"))
     stopifnot('Specify `error` as "ci", "sd", "se", or "iqr".' = error %in% c("ci", "sd", "se", "iqr"))
-    xsummary <- dplyr::case_when(identical(summary, "mean") ~ mean(x, na.rm = TRUE),
-                                 identical(summary, "median") ~ median(x, na.rm = TRUE))
+    xsummary <- dplyr::case_when(
+      identical(summary, "mean") ~ mean(x, na.rm = TRUE),
+      identical(summary, "median") ~ median(x, na.rm = TRUE)
+    )
     xn <- sum(!is.na(x))
     stopifnot("Less than two non-missing values in vector, so no confidence interval can be computed." = xn > 1)
     xlimit <- 1- (1 - cilevel) / 2
@@ -464,14 +472,18 @@ format_meanerror <- function(x = NULL,
     xse <- xsd / sqrt(xn)
     xci <- stats::qt(xlimit, df = (xn - 1)) * xse
     xiqr <- stats::IQR(x)
-    xlower <- dplyr::case_when(identical(error, "ci") ~ xsummary - xci,
-                               identical(error, "sd") ~ xsummary - xsd,
-                               identical(error, "se") ~ xsummary - xse,
-                               identical(error, "iqr") ~ xsummary - xiqr)
-    xupper <-  dplyr::case_when(identical(error, "ci") ~ xsummary + xci,
-                                identical(error, "sd") ~ xsummary + xsd,
-                                identical(error, "se") ~ xsummary + xse,
-                                identical(error, "iqr") ~ xsummary + xiqr)
+    xlower <- dplyr::case_when(
+      identical(error, "ci") ~ xsummary - xci,
+      identical(error, "sd") ~ xsummary - xsd,
+      identical(error, "se") ~ xsummary - xse,
+      identical(error, "iqr") ~ xsummary - xiqr
+    )
+    xupper <-  dplyr::case_when(
+      identical(error, "ci") ~ xsummary + xci,
+      identical(error, "sd") ~ xsummary + xsd,
+      identical(error, "se") ~ xsummary + xse,
+      identical(error, "iqr") ~ xsummary + xiqr
+    )
     xinterval <- xsummary - xlower
   } else if (!is.null(values)) {
     stopifnot("Argument `values` must be a numeric vector." = is.numeric(values))
@@ -497,33 +509,38 @@ format_meanerror <- function(x = NULL,
 
   # Build mean
   # subname <- ifelse(!is.null(subscript), subscript, "")
-  unit <- dplyr::case_when(!is.null(units) ~ paste0(" ", units),
-                           .default = "")
-  mean_lab <- dplyr::case_when(identical(meanlabel, "none") ~ "",
-                               identical(summary, "mean") & identical(meanlabel, "abbr") ~
-                                 paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "mean") & identical(meanlabel, "word") ~
-                                 paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "median") & identical(meanlabel, "abbr") ~
-                                 paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "median") & identical(meanlabel, "word") ~
-                                 paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
+  unit <- dplyr::case_when(
+    !is.null(units) ~ paste0(" ", units),
+    .default = ""
+  )
+  mean_lab <- dplyr::case_when(
+    identical(meanlabel, "none") ~ "",
+    identical(summary, "mean") & identical(meanlabel, "abbr") ~
+      paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(summary, "mean") & identical(meanlabel, "word") ~
+      paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(summary, "median") & identical(meanlabel, "abbr") ~
+      paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(summary, "median") & identical(meanlabel, "word") ~
+      paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
   )
   full_mean <- paste0(mean_lab, format_num(xsummary, digits = digits), unit)
 
   # Add error
-  error_lab <- dplyr::case_when(!errorlabel ~ "",
-                                identical(error, "ci") ~ paste0(cilevel * 100, "% CI"),
-                                identical(error, "sd") ~ paste0(format_chr("SD", italics = italics, type = type)),
-                                identical(error, "se") ~ paste0(format_chr("SE", italics = italics, type = type)),
-                                identical(error, "iqr") ~ paste0(format_chr("IQR", italics = italics, type = type)))
-  full_error <- dplyr::case_when(identical(display, "limits") ~ paste0(", ", error_lab, " [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
-                                 identical(display, "pm") ~ paste0(" \u00b1 ", format_num(xinterval, digits = digits)),
-                                 identical(display, "par") ~ paste0(" ", "(", error_lab, " = ", format_num(xinterval, digits = digits), ")"),
-                                 .default = "")
-
+  error_lab <- dplyr::case_when(
+    !errorlabel ~ "",
+    identical(error, "ci") ~ paste0(cilevel * 100, "% CI"),
+    identical(error, "sd") ~ paste0(format_chr("SD", italics = italics, type = type)),
+    identical(error, "se") ~ paste0(format_chr("SE", italics = italics, type = type)),
+    identical(error, "iqr") ~ paste0(format_chr("IQR", italics = italics, type = type))
+  )
+  full_error <- dplyr::case_when(
+    identical(display, "limits") ~ paste0(", ", error_lab, " [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
+    identical(display, "pm") ~ paste0(" \u00b1 ", format_num(xinterval, digits = digits)),
+    identical(display, "par") ~ paste0(" ", "(", error_lab, " = ", format_num(xinterval, digits = digits), ")"),
+    .default = ""
+    )
   paste0(full_mean, full_error)
-
 }
 
 #' @rdname format_meanerror
