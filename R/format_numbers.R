@@ -20,12 +20,10 @@ format_num <- function(x, digits = 1, pzero = TRUE) {
   stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
 
   # Format number
-  # char_num <- formatC(x, digits = digits, format = "f")
-  if (!pzero) {
-    sub("0\\.", "\\.", formatC(x, digits = digits, format = "f"))
-  } else {
-    formatC(x, digits = digits, format = "f")
-  }
+  num <- dplyr::case_when(
+    !pzero ~ sub("0\\.", "\\.", formatC(x, digits = digits, format = "f")),
+    pzero ~ formatC(x, digits = digits, format = "f")
+  )
 }
 
 
@@ -54,31 +52,39 @@ format_scientific <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Format number
-  x <- formatC(x, digits = digits, format = "e")
-  x <- gsub("e\\+00$", "", x)
-  if (identical(type, "md")) {
-    x <- gsub("e\\+0?(\\d+)", "\u00D710^\\1^", x)
-    gsub("e\\-0?(\\d+)", "\u00D710^-\\1^", x)
-  } else if (identical(type, "latex")) {
-    x <- gsub("e\\+0?(\\d+)$", " \\\\times 10\\^\\{\\1\\}", x)
-    gsub("e\\-0?(\\d+)$", " \\\\times 10\\^\\{-\\1\\}", x)
-  }
+  num <- formatC(x, digits = digits, format = "e")
+  num <- gsub("e\\+00$", "", num)
+  num <- dplyr::case_when(
+    identical(type, "md") ~ gsub("e\\+0?(\\d+)", "\u00D710^\\1^", num),
+    identical(type, "latex") ~ gsub("e\\+0?(\\d+)$", " \\\\times 10\\^\\{\\1\\}", num),
+    .default = num
+  )
+  num <- dplyr::case_when(
+    identical(type, "md") ~ gsub("e\\-0?(\\d+)", "\u00D710^-\\1^", num),
+    identical(type, "latex") ~ gsub("e\\-0?(\\d+)$", " \\\\times 10\\^\\{-\\1\\}", num),
+    .default = num
+  )
+  num
 }
 
 format_chr <- function(x,
                        italics = TRUE,
                        type = "md") {
-  dplyr::case_when(italics & type == "md" ~ paste0("_", x, "_"),
-                   italics & type == "latex" ~ paste0("$", x, "$"),
-                   !italics ~ x)
+  dplyr::case_when(
+    italics & type == "md" ~ paste0("_", x, "_"),
+    italics & type == "latex" ~ paste0("$", x, "$"),
+    !italics ~ x
+  )
 }
 
 
 
 format_sub <- function(subscript = NULL,
                        type = "md") {
-  dplyr::case_when(subscript == "" ~ "",
-                   !is.null(subscript) & type == "md" ~ paste0("~", subscript, "~"),
-                   !is.null(subscript) & type == "latex" ~ paste0("$_{", subscript, "}$"),
-                   .default = "")
+  dplyr::case_when(
+    subscript == "" ~ "",
+    !is.null(subscript) & type == "md" ~ paste0("~", subscript, "~"),
+    !is.null(subscript) & type == "latex" ~ paste0("$_{", subscript, "}$"),
+    .default = ""
+  )
 }
