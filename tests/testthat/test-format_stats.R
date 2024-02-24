@@ -119,6 +119,8 @@ test_that("format_bf() works properly", {
   expect_equal(format_bf(0.1234, subscript = ""), "_BF_ = 0.12")
   expect_equal(format_bf(0.1234, type = "latex"), "$BF$$_{10}$ = 0.12")
   expect_equal(format_bf(0.1234, type = "latex", italics = FALSE), "BF$_{10}$ = 0.12")
+  expect_equal(format_bf(0.1234, label = "bf"), "_bf_~10~ = 0.12")
+  expect_equal(format_bf(0.1234, label = ""), "0.12")
   skip_on_cran()
   df <- data.frame(a = 1:10, b = c(1,3,2,4,6,5,7,8,10,9))
   test_corrbf <- BayesFactor::correlationBF(df$a, df$b)
@@ -145,6 +147,8 @@ test_that("format_p() works properly", {
   expect_equal(format_p(0.0012, pzero = TRUE), "_p_ = 0.001")
   expect_equal(format_p(0.0012, italics = FALSE), "p = .001")
   expect_equal(format_p(0.0012, type = "latex"), "$p$ = .001")
+  expect_equal(format_p(0.0012, label = "P"), "_P_ = .001")
+  expect_equal(format_p(0.0012, label = ""), ".001")
 })
 
 test_that("format_meanerror() works properly", {
