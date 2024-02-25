@@ -397,7 +397,7 @@ format_p <- function(x,
 #' `format_medianiqr()` are wrappers around `format_meanerror()` for specific
 #' error measures with a default style. To just format the mean or median with
 #' no error, use `format_mean()` or `format_median()`, other wrappers around
-#' `format_meanerror()` that drop the error measure.
+#' `format_meanerror()` that drop the error measure. All measures ignore NAs.
 #'
 #' @param x Numeric vector of data to calculate mean and error
 #' @param summary Character vector specifying summary measure of central
@@ -555,7 +555,7 @@ format_mean <- function(x = NULL,
                         units = NULL,
                         display = "none",
                         type = "md") {
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
@@ -573,7 +573,7 @@ format_meanci <- function(x = NULL,
                           cilevel = 0.95,
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -590,7 +590,7 @@ format_meanse <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -607,7 +607,7 @@ format_meansd <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -622,7 +622,7 @@ format_median <- function(x = NULL,
                           units = NULL,
                           display = "none",
                           type = "md") {
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
@@ -639,6 +639,6 @@ format_medianiqr <- function(x = NULL,
                              display = "par",
                              errorlabel = TRUE,
                              type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
