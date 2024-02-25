@@ -6,7 +6,7 @@
 \usage{
 format_p(
   x,
-  pdigits = 3,
+  digits = 3,
   pzero = FALSE,
   label = "p",
   italics = TRUE,
@@ -16,7 +16,7 @@ format_p(
 \arguments{
 \item{x}{Number representing p-value}
 
-\item{pdigits}{Number of digits after the decimal for p-values, ranging
+\item{digits}{Number of digits after the decimal for p-values, ranging
 between 1-5 (also controls cutoff for small p-values)}
 
 \item{pzero}{Logical indicator of whether to include leading zero for
@@ -32,7 +32,7 @@ label or operator (\code{=}, \code{<}, \code{>})}
 }
 \value{
 A character string that includes \emph{p} and then the p-value formatted in
-Markdown or LaTeX. If p-value is below \code{pdigits} cutoff, \code{p < cutoff} is
+Markdown or LaTeX. If p-value is below \code{digits} cutoff, \code{p < cutoff} is
 used.
 }
 \description{
@@ -44,11 +44,11 @@ italics are all customizable.
 \examples{
 format_p(0.001)
 # Round digits for p-values greater than cutoff
-format_p(0.111, pdigits = 2)
+format_p(0.111, digits = 2)
 # Default cutoff is p < 0.001
 format_p(0.0001)
-# Set cutoff with pdigits
-format_p(0.0001, pdigits = 2)
+# Set cutoff with digits
+format_p(0.0001, digits = 2)
 # Include leading zero
 format_p(0.001, pzero = TRUE)
 # Return only Bayes factor value (no label)
