@@ -71,7 +71,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> is to provide functions that flexibly format statistical output in a way that can be inserted into R Markdown documents. This is analogous to the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a> functions in the <a href="https://github.com/crsh/papaja" class="external-link"><code>{papaja}</code></a> package, but functions in <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> can print Markdown or LaTeX syntax. If your output document is a PDF, this doesn’t matter. But if your output document is a Word document (as required by many journal publishers), Markdown syntax generates editable output instead of an image of output. The default style for statistical output follows <a href="https://apastyle.apa.org/" class="external-link">American Psychological Association style</a>, but many defaults can be over-ridden to flexibly format output.</p>
+<p>The goal of <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> is to provide functions that flexibly format statistical output in a way that can be inserted into R Markdown or Quarto documents. This is analogous to the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a> functions in the <a href="https://github.com/crsh/papaja" class="external-link"><code>{papaja}</code></a> package, but functions in <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> can print Markdown or LaTeX syntax. If your output document is a PDF, this doesn’t matter. But if your output document is a Word document (as required by many journal publishers), Markdown syntax generates editable output instead of an image of output. The default style for statistical output follows <a href="https://apastyle.apa.org/" class="external-link">American Psychological Association style</a>, but many defaults can be over-ridden to flexibly format output.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -130,9 +130,9 @@
 </h2>
 <ul>
 <li>Correlations (output from <code><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test()</a></code>, including Pearson’s, Kendall’s, and Spearman’s correlations)</li>
-<li>T-test (output from <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code>)</li>
+<li>Student t-tests and Wilcoxon rank sum and signed rank tests (output from <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> and <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test()</a></code>, including one-sample, two-sample independent, and paired tests)</li>
 <li>Means and error (calculates from vector or uses vector of mean and error interval or mean, lower error limit, and upper error limit)</li>
-<li>P-values (scalar number)</li>
+<li>P-values</li>
 <li>Bayes factors (output from BayesFactor objects or scalar number)</li>
 <li>Scientific notation</li>
 <li>Other numbers</li>
@@ -143,7 +143,7 @@
 </h2>
 <p>To cite <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a>, use:</p>
 <blockquote>
-<p>Stevens, Jeffrey R. (2023). formatstats: Format and print statistical output. (version 0.0.0.9000) <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link uri">https://github.com/JeffreyRStevens/formatstats</a></p>
+<p>Stevens, Jeffrey R. (2024). formatstats: Format and print statistical output. (version 0.0.0.9000) <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link uri">https://github.com/JeffreyRStevens/formatstats</a></p>
 </blockquote>
 </div>
 <div class="section level2">
