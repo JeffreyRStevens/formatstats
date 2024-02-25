@@ -12,8 +12,8 @@ coverage](https://codecov.io/gh/JeffreyRStevens/formatstats/branch/main/graph/ba
 <!-- badges: end -->
 
 The goal of `{formatstats}` is to provide functions that flexibly format
-statistical output in a way that can be inserted into R Markdown
-documents. This is analogous to the
+statistical output in a way that can be inserted into R Markdown or
+Quarto documents. This is analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 functions in the [`{papaja}`](https://github.com/crsh/papaja) package,
 but functions in `{formatstats}` can print Markdown or LaTeX syntax. If
@@ -89,10 +89,12 @@ Fuel efficiency and engine displacement were highly correlated (r =
 
 - Correlations (output from `cor.test()`, including Pearson’s,
   Kendall’s, and Spearman’s correlations)
-- T-test (output from `t.test()`)
+- Student t-tests and Wilcoxon rank sum and signed rank tests (output
+  from `t.test()` and `wilcox.test()`, including one-sample, two-sample
+  independent, and paired tests)
 - Means and error (calculates from vector or uses vector of mean and
   error interval or mean, lower error limit, and upper error limit)
-- P-values (scalar number)
+- P-values
 - Bayes factors (output from BayesFactor objects or scalar number)
 - Scientific notation
 - Other numbers
@@ -101,7 +103,7 @@ Fuel efficiency and engine displacement were highly correlated (r =
 
 To cite `{formatstats}`, use:
 
-> Stevens, Jeffrey R. (2023). formatstats: Format and print statistical
+> Stevens, Jeffrey R. (2024). formatstats: Format and print statistical
 > output. (version 0.0.0.9000)
 > <https://github.com/JeffreyRStevens/formatstats>
 

@@ -133,12 +133,12 @@ test_that("format_bf() works properly", {
 test_that("format_p() works properly", {
   suppressMessages(expect_error(format_p("xxx"),
                                 "Input must be a numeric vector"))
-  suppressMessages(expect_error(format_p(0.0012, pdigits = "xxx"),
-                                "Argument `pdigits` must be a numeric between 1 and 5"))
-  suppressMessages(expect_error(format_p(0.0012, pdigits = 0),
-                                "Argument `pdigits` must be a numeric between 1 and 5"))
-  suppressMessages(expect_error(format_p(0.0012, pdigits = 7),
-                                "Argument `pdigits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, digits = "xxx"),
+                                "Argument `digits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, digits = 0),
+                                "Argument `digits` must be a numeric between 1 and 5"))
+  suppressMessages(expect_error(format_p(0.0012, digits = 7),
+                                "Argument `digits` must be a numeric between 1 and 5"))
   suppressMessages(expect_error(format_p(0.0012, pzero = "xxx"),
                                 "Argument `pzero` must be TRUE or FALSE"))
   suppressMessages(expect_error(format_p(0.0012, italics = "xxx"),
@@ -146,7 +146,7 @@ test_that("format_p() works properly", {
   suppressMessages(expect_error(format_p(0.0012, type = "xxx"),
                                 "Argument `type` must be 'md' or 'latex'"))
   expect_equal(format_p(0.0012), "_p_ = .001")
-  expect_equal(format_p(0.0012, pdigits = 2), "_p_ < .01")
+  expect_equal(format_p(0.0012, digits = 2), "_p_ < .01")
   expect_equal(format_p(0.0012, pzero = TRUE), "_p_ = 0.001")
   expect_equal(format_p(0.0012, italics = FALSE), "p = .001")
   expect_equal(format_p(0.0012, type = "latex"), "$p$ = .001")
@@ -189,9 +189,9 @@ test_that("format_meanerror() works properly", {
   expect_equal(format_meanerror(x = 1:10, cilevel = 0.9), "_M_ = 5.5, 90% CI [3.7, 7.3]")
   expect_equal(format_meanerror(x = 1:10, errorlabel = FALSE), "_M_ = 5.5,  [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, type = "latex"), "$M$ = 5.5, 95% CI [3.3, 7.7]")
-  expect_equal(format_mean(x = 1:10), "_M_ = 5.50")
-  expect_equal(format_meanci(x = 1:10), "_M_ = 5.50, 95% CI [3.33, 7.67]")
-  expect_equal(format_meansd(x = 1:10), "_M_ = 5.50 (_SD_ = 3.03)")
-  expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (_SE_ = 0.96)")
+  expect_equal(format_mean(x = 1:10), "_M_ = 5.5")
+  expect_equal(format_meanci(x = 1:10), "_M_ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meansd(x = 1:10), "_M_ = 5.5 (_SD_ = 3.0)")
+  expect_equal(format_meanse(x = 1:10), "_M_ = 5.5 (_SE_ = 1.0)")
 })
 

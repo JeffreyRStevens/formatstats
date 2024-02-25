@@ -68,7 +68,7 @@ format_corr <- function(x,
     cis <- NULL
     ci <- FALSE
   }
-  pvalue <- format_p(x$p.value, pdigits = pdigits, pzero = pzero,
+  pvalue <- format_p(x$p.value, digits = pdigits, pzero = pzero,
                      italics = italics, type = type)
 
   # Build label
@@ -173,7 +173,7 @@ format_ttest <- function(x,
     statlab <- attr(x$statistic, "name")
   }
   tstat <- format_num(x$statistic, digits = digits)
-  pvalue <- format_p(x$p.value, pdigits = pdigits, pzero = pzero,
+  pvalue <- format_p(x$p.value, digits = pdigits, pzero = pzero,
                      italics = italics, type = type)
 
   # Build label
@@ -319,7 +319,7 @@ format_bf <- function(x,
 #' italics are all customizable.
 #'
 #' @param x Number representing p-value
-#' @param pdigits Number of digits after the decimal for p-values, ranging
+#' @param digits Number of digits after the decimal for p-values, ranging
 #' between 1-5 (also controls cutoff for small p-values)
 #' @param pzero Logical indicator of whether to include leading zero for
 #' p-values
@@ -331,33 +331,33 @@ format_bf <- function(x,
 #'
 #' @return
 #' A character string that includes _p_ and then the p-value formatted in
-#' Markdown or LaTeX. If p-value is below `pdigits` cutoff, `p < cutoff` is
+#' Markdown or LaTeX. If p-value is below `digits` cutoff, `p < cutoff` is
 #' used.
 #' @export
 #'
 #' @examples
 #' format_p(0.001)
 #' # Round digits for p-values greater than cutoff
-#' format_p(0.111, pdigits = 2)
+#' format_p(0.111, digits = 2)
 #' # Default cutoff is p < 0.001
 #' format_p(0.0001)
-#' # Set cutoff with pdigits
-#' format_p(0.0001, pdigits = 2)
+#' # Set cutoff with digits
+#' format_p(0.0001, digits = 2)
 #' # Include leading zero
 #' format_p(0.001, pzero = TRUE)
 #' # Return only Bayes factor value (no label)
 #' format_p(0.001, label = "")
 format_p <- function(x,
-                     pdigits = 3,
+                     digits = 3,
                      pzero = FALSE,
                      label = "p",
                      italics = TRUE,
                      type = "md") {
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits > 0)
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits < 6)
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = is.numeric(digits))
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = digits > 0)
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = digits < 6)
   stopifnot("Argument `pzero` must be TRUE or FALSE." = is.logical(pzero))
   stopifnot("Argument `italics` must be TRUE or FALSE." = is.logical(italics))
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
@@ -372,14 +372,14 @@ format_p <- function(x,
   }
   # Build label
   ## Determine if using = or <
-  cutoff <- as.numeric(paste0("1e-", pdigits))
+  cutoff <- as.numeric(paste0("1e-", digits))
   operator <- ifelse(label != "" & x < cutoff, " < ", operator)
   ## Format pvalue
   pvalue <- dplyr::case_when(
-    x < cutoff & pzero ~ as.character(as.numeric(paste0("1e-", pdigits))),
-    x < cutoff & !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", pdigits)))),
-    x >= cutoff & pzero ~ format_num(x, digits = pdigits),
-    x >= cutoff & !pzero ~ sub("0\\.", "\\.", format_num(x, digits = pdigits))
+    x < cutoff & pzero ~ as.character(as.numeric(paste0("1e-", digits))),
+    x < cutoff & !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", digits)))),
+    x >= cutoff & pzero ~ format_num(x, digits = digits),
+    x >= cutoff & !pzero ~ sub("0\\.", "\\.", format_num(x, digits = digits))
   )
   paste0(p_lab, operator, pvalue)
 }
@@ -397,7 +397,7 @@ format_p <- function(x,
 #' `format_medianiqr()` are wrappers around `format_meanerror()` for specific
 #' error measures with a default style. To just format the mean or median with
 #' no error, use `format_mean()` or `format_median()`, other wrappers around
-#' `format_meanerror()` that drop the error measure.
+#' `format_meanerror()` that drop the error measure. All measures ignore NAs.
 #'
 #' @param x Numeric vector of data to calculate mean and error
 #' @param summary Character vector specifying summary measure of central
@@ -548,14 +548,14 @@ format_meanerror <- function(x = NULL,
 format_mean <- function(x = NULL,
                         summary = "mean",
                         values = NULL,
-                        digits = 2,
+                        digits = 1,
                         meanlabel = "abbr",
                         italics = TRUE,
                         subscript = NULL,
                         units = NULL,
                         display = "none",
                         type = "md") {
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
@@ -564,7 +564,7 @@ format_meanci <- function(x = NULL,
                           summary = "mean",
                           error = "ci",
                           values = NULL,
-                          digits = 2,
+                          digits = 1,
                           meanlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
@@ -573,7 +573,7 @@ format_meanci <- function(x = NULL,
                           cilevel = 0.95,
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -582,7 +582,7 @@ format_meanse <- function(x = NULL,
                           summary = "mean",
                           error = "se",
                           values = NULL,
-                          digits = 2,
+                          digits = 1,
                           meanlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
@@ -590,7 +590,7 @@ format_meanse <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -599,7 +599,7 @@ format_meansd <- function(x = NULL,
                           summary = "mean",
                           error = "sd",
                           values = NULL,
-                          digits = 2,
+                          digits = 1,
                           meanlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
@@ -607,7 +607,7 @@ format_meansd <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
@@ -615,14 +615,14 @@ format_meansd <- function(x = NULL,
 format_median <- function(x = NULL,
                           summary = "median",
                           values = NULL,
-                          digits = 2,
+                          digits = 1,
                           meanlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
                           display = "none",
                           type = "md") {
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
@@ -631,7 +631,7 @@ format_medianiqr <- function(x = NULL,
                              summary = "median",
                              error = "iqr",
                              values = NULL,
-                             digits = 2,
+                             digits = 1,
                              meanlabel = "abbr",
                              italics = TRUE,
                              subscript = NULL,
@@ -639,6 +639,6 @@ format_medianiqr <- function(x = NULL,
                              display = "par",
                              errorlabel = TRUE,
                              type = "md") {
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
