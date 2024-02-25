@@ -26,7 +26,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 The goal of `{formatstats}` is to provide functions that flexibly format 
-statistical output in a way that can be inserted into R Markdown documents. 
+statistical output in a way that can be inserted into R Markdown or Quarto documents. 
 This is analogous to the
 [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 functions in the [`{papaja}`](https://github.com/crsh/papaja) package, but 
@@ -99,7 +99,7 @@ Fuel efficiency and engine displacement were highly correlated
 
 To cite `{formatstats}`, use:
 
-> Stevens, Jeffrey R. (2023). formatstats: Format and print statistical output.
+> Stevens, Jeffrey R. (2024). formatstats: Format and print statistical output.
 > (version 0.0.0.9000)
 > <https://github.com/JeffreyRStevens/formatstats>
 
