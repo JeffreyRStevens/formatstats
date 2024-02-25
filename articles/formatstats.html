@@ -88,30 +88,260 @@ but generates images for mathematical symbols when outputting to Word
 documents.</p>
 <p>The <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> package uses APA style as the default,
 but allow more flexible formatting such as including the leading 0
-before numbers with maximum values of 1. It also defaults to using
-Markdown syntax (instead of LaTeX) for easy conversions to Word
-documents.</p>
+before numbers with maximum values of 1. All functions accept a
+<code>type</code> argument that specifies either <code>"md"</code> for
+Markdown (default) or <code>"latex"</code> for LaTeX. This package can
+format statistical values, statistical objects, and numbers more
+generally.</p>
 <div class="section level2">
-<h2 id="formatting-statistics">Formatting statistics<a class="anchor" aria-label="anchor" href="#formatting-statistics"></a>
+<h2 id="formatting-statistical-values">Formatting statistical values<a class="anchor" aria-label="anchor" href="#formatting-statistical-values"></a>
 </h2>
 <div class="section level3">
-<h3 id="means-and-error">Means and error<a class="anchor" aria-label="anchor" href="#means-and-error"></a>
+<h3 id="central-tendency-and-error">Central tendency and error<a class="anchor" aria-label="anchor" href="#central-tendency-and-error"></a>
 </h3>
+<div class="section level4">
+<h4 id="data-vectors">Data vectors<a class="anchor" aria-label="anchor" href="#data-vectors"></a>
+</h4>
 <p>Often, we need to include simple descriptive statistics in our
-documents, such as measures of central tendency and error.</p>
-</div>
-<div class="section level3">
-<h3 id="p-values">P-values<a class="anchor" aria-label="anchor" href="#p-values"></a>
-</h3>
-</div>
-<div class="section level3">
-<h3 id="bayes-factors">Bayes factors<a class="anchor" aria-label="anchor" href="#bayes-factors"></a>
-</h3>
+documents, such as measures of central tendency and error.
+<a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> includes a suite of functions that can
+calculate different summary measures of central tendency (mean or
+median) and error (confidence interval, standard error, standard
+deviation, interquartile range) from a numeric data vector. With the
+base function <code><a href="../reference/format_meanerror.html">format_meanerror()</a></code>, you can specify central
+tendency with the <code>summary</code> argument and error with the
+<code>error</code> argument. For instance,
+<code>format_meanerror(vec, summary = "mean", error = "se")</code>
+calculates mean and standard error.</p>
+<p><a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> includes a number of wrapper functions
+that cover common measures of central tendency and error including:</p>
+<ul>
+<li><code><a href="../reference/format_meanerror.html">format_meanci()</a></code></li>
+<li><code><a href="../reference/format_meanerror.html">format_meanse()</a></code></li>
+<li><code><a href="../reference/format_meanerror.html">format_meansd()</a></code></li>
+<li><code><a href="../reference/format_meanerror.html">format_medianiqr()</a></code></li>
+</ul>
+<p>And if you don’t want to include error, use
+<code><a href="../reference/format_meanerror.html">format_mean()</a></code> or <code><a href="../reference/format_meanerror.html">format_median()</a></code>.</p>
 <table class="table">
 <colgroup>
 <col width="42%">
 <col width="57%">
 </colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_meanerror(mtcars$mpg, error = "ci")</code></td>
+<td>
+<em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
+</tr>
+<tr class="even">
+<td><code>format_meanci(mtcars$mpg)</code></td>
+<td>
+<em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
+</tr>
+<tr class="odd">
+<td><code>format_medianiqr(mtcars$mpg)</code></td>
+<td>
+<em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
+</tr>
+<tr class="even">
+<td><code>format_mean(mtcars$mpg)</code></td>
+<td>
+<em>M</em> = 20.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level4">
+<h4 id="pre-calculated-summaries">Pre-calculated summaries<a class="anchor" aria-label="anchor" href="#pre-calculated-summaries"></a>
+</h4>
+<p>In addition to calculating values directly from the vectors, these
+functions can format already-calculated measures. So if you already have
+your mean and error calculated, just pass the vector of central
+tendency, lower error limit, and upper error limit to the
+<code>values</code> argument to format them. For instance,
+<code>format_meanci(values = c(12.5, 11.2, 13.7))</code> produces
+<em>M</em> = 12.5, 95% CI [11.2, 13.7].</p>
+</div>
+<div class="section level4">
+<h4 id="formatting-output">Formatting output<a class="anchor" aria-label="anchor" href="#formatting-output"></a>
+</h4>
+<p>These functions can control many aspects of formatting for the values
+and labels of summary statistics. Digits after the decimal are
+controlled with <code>digits</code> (default is 1). The
+<code>meanlabel</code> argument defines whether the default abbreviation
+is used (“M” or “Mdn”), the full word (“Mean” or “Median”), or no label
+is provided. Each of these can be italicized or not with the
+<code>italics</code> argument, subscripts can be included with the
+<code>subscript</code> argument, and units added with the
+<code>units</code> argument.</p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_mean(mtcars$mpg)</code></td>
+<td>
+<em>M</em> = 20.1</td>
+</tr>
+<tr class="even">
+<td><code>format_mean(mtcars$mpg, meanlabel = "word")</code></td>
+<td>
+<em>Mean</em> = 20.1</td>
+</tr>
+<tr class="odd">
+<td><code>format_mean(mtcars$mpg, meanlabel = "none")</code></td>
+<td>20.1</td>
+</tr>
+<tr class="even">
+<td><code>format_mean(mtcars$mpg, italics = FALSE)</code></td>
+<td>M = 20.1</td>
+</tr>
+<tr class="odd">
+<td><code>format_mean(mtcars$mpg, subscript = "A")</code></td>
+<td>
+<em>M</em><sub>A</sub> = 20.1</td>
+</tr>
+<tr class="even">
+<td><code>format_mean(mtcars$mpg, units = "m")</code></td>
+<td>
+<em>M</em> = 20.1 m</td>
+</tr>
+</tbody>
+</table>
+<p>Error can be displayed in a number of different ways. Setting the
+<code>display</code> argument to <code>"limits"</code> (default)
+includes upper and lower limits in brackets. If intervals rather than
+limits are preferred, they can be appended after the mean/median with ±
+using <code>"pm"</code> or in parentheses with <code>"par"</code>. Error
+is not displayed if <code>display = "none"</code>. The presence of the
+error label is controlled by the logical argument
+<code>errorlabel</code>. When set to <code>FALSE</code>, no error label
+is included. For confidence intervals, the <code>cilevel</code> argument
+takes a numeric scalar from 0-1 to define the confidence level.</p>
+<table class="table">
+<colgroup>
+<col width="57%">
+<col width="42%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_meanci(mtcars$mpg)</code></td>
+<td>
+<em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
+</tr>
+<tr class="even">
+<td><code>format_meanci(mtcars$mpg, display = "pm")</code></td>
+<td>
+<em>M</em> = 20.1 ± 2.2</td>
+</tr>
+<tr class="odd">
+<td><code>format_meanci(mtcars$mpg, display = "par")</code></td>
+<td>
+<em>M</em> = 20.1 (95% CI = 2.2)</td>
+</tr>
+<tr class="even">
+<td><code>format_meanci(mtcars$mpg, display = "none")</code></td>
+<td>
+<em>M</em> = 20.1</td>
+</tr>
+<tr class="odd">
+<td><code>format_meanci(mtcars$mpg, errorlabel = FALSE)</code></td>
+<td>
+<em>M</em> = 20.1, [17.9, 22.3]</td>
+</tr>
+<tr class="even">
+<td><code>format_meanci(mtcars$mpg, cilevel = 0.90)</code></td>
+<td>
+<em>M</em> = 20.1, 90% CI [18.3, 21.9]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section level3">
+<h3 id="p-values">P-values<a class="anchor" aria-label="anchor" href="#p-values"></a>
+</h3>
+<p>P-values are pretty easy to format with <code><a href="../reference/format_p.html">format_p()</a></code>.
+<code>digits</code> controls the number of digits after the decimal, and
+if the value is lower, <code>p &lt;</code> is used. Unfortunately, APA
+style involves lopping off the leading zero in p-values, but setting
+<code>pzero  = TRUE</code> turns off this silly setting. The p-value
+label is controlled by <code>label</code>, where the user can specify
+the exact label text. By default, this is a lower case, italicized
+<em>p</em>. Non-italicized can be defined with
+<code>italics = FALSE</code>. P-value labels can be omitted by setting
+<code>label = ""</code>.</p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_p(0.001)</code></td>
+<td>
+<em>p</em> = .001</td>
+</tr>
+<tr class="even">
+<td><code>format_p(0.001, digits = 2)</code></td>
+<td>
+<em>p</em> &lt; .01</td>
+</tr>
+<tr class="odd">
+<td><code>format_p(0.321, digits = 2)</code></td>
+<td>
+<em>p</em> = .32</td>
+</tr>
+<tr class="even">
+<td><code>format_p(0.001, pzero = TRUE)</code></td>
+<td>
+<em>p</em> = 0.001</td>
+</tr>
+<tr class="odd">
+<td><code>format_p(0.001, label = "P")</code></td>
+<td>
+<em>P</em> = .001</td>
+</tr>
+<tr class="even">
+<td><code>format_p(0.001, italics = FALSE)</code></td>
+<td>p = .001</td>
+</tr>
+<tr class="odd">
+<td><code>format_p(0.001, label = "")</code></td>
+<td>.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="bayes-factors">Bayes factors<a class="anchor" aria-label="anchor" href="#bayes-factors"></a>
+</h3>
+<p>Bayes factors are not as standardized in how they are formatted since
+they are gaining in popularity since the development of the <a href="https://cran.r-project.org/package=BayesFactor" class="external-link"><code>{BayesFactor}</code></a>
+package. One issue is that Bayes factors can be referenced from either
+the alternative hypothesis (H<sub>1</sub>) or the null hypothesis
+(H<sub>0</sub>). Also, as a ratio, digits after the decimal are more
+important below 1 than above 1.</p>
+<p>To respond to the digits issue, the <code><a href="../reference/format_bf.html">format_bf()</a></code> function
+controls digits for Bayes factor less than 1 (<code>digits1</code>)
+separately from those greater than 1 (<code>digits2</code>). In fact,
+the defaults are different for these two arguments. Further Bayes
+factors can be very large or very small when evidence strongly favors
+one hypothesis over another. Therfore, the <code>cutoff</code> argument
+set a threshold above which (or below 1/cutoff) the returned value is
+truncated (e.g., BF &gt; 1000).</p>
+<table class="table">
 <thead><tr class="header">
 <th>Code</th>
 <th>Output</th>
@@ -130,37 +360,81 @@ documents, such as measures of central tendency and error.</p>
 </td>
 </tr>
 <tr class="odd">
-<td><code>format_bf(4321, italics = FALSE, subscript = "")</code></td>
-<td>BF = 4.3×10<sup>3</sup>
-</td>
-</tr>
-<tr class="even">
-<td><code>format_bf(4321, cutoff = 1000)</code></td>
-<td>
-<em>BF</em><sub>10</sub> &gt; 1000</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
 <td><code>format_bf(0.04321)</code></td>
 <td>
 <em>BF</em><sub>10</sub> = 0.04</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>format_bf(0.04321, digits2 = 3)</code></td>
 <td>
 <em>BF</em><sub>10</sub> = 0.043</td>
 </tr>
+<tr class="odd">
+<td><code>format_bf(4321, cutoff = 1000)</code></td>
+<td>
+<em>BF</em><sub>10</sub> &gt; 1000</td>
+</tr>
 <tr class="even">
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
 <td><code>format_bf(0.04321, cutoff = 10)</code></td>
 <td>
 <em>BF</em><sub>10</sub> &lt; 0.1</td>
 </tr>
 </tbody>
 </table>
+<p>The default label for Bayes factors is <em>BF</em><sub>10</sub>. The
+text of the label can be changed with the <code>label</code> argument,
+where setting <code>label = ""</code> omits the label. Italics can be
+removed with <code>italics = FALSE</code>, and the subscript can be set
+to 01 (<code>subscript = "01"</code>) or removed
+(<code>subscript = ""</code>).</p>
+<table class="table">
+<colgroup>
+<col width="61%">
+<col width="38%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_bf(4321)</code></td>
+<td>
+<em>BF</em><sub>10</sub> = 4.3×10<sup>3</sup>
+</td>
+</tr>
+<tr class="even">
+<td><code>format_bf(4321, italics = FALSE)</code></td>
+<td>BF<sub>10</sub> = 4.3×10<sup>3</sup>
+</td>
+</tr>
+<tr class="odd">
+<td><code>format_bf(4321, subscript = "")</code></td>
+<td>
+<em>BF</em> = 4.3×10<sup>3</sup>
+</td>
+</tr>
+<tr class="even">
+<td><code>format_bf(4321, label = "Bayes factor", italics = FALSE, subscript = "")</code></td>
+<td>Bayes factor = 4.3×10<sup>3</sup>
+</td>
+</tr>
+<tr class="odd">
+<td><code>format_bf(4321, label = "")</code></td>
+<td>4.3×10<sup>3</sup>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
+</div>
+<div class="section level2">
+<h2 id="formatting-statistical-objects">Formatting statistical objects<a class="anchor" aria-label="anchor" href="#formatting-statistical-objects"></a>
+</h2>
 <div class="section level3">
 <h3 id="correlations">Correlations<a class="anchor" aria-label="anchor" href="#correlations"></a>
 </h3>
