@@ -14,37 +14,113 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup-real, echo = FALSE, message = FALSE}
+library(formatstats)
+# devtools::load_all(".")
+```
+
+```{r setup-show, eval = FALSE}
 library(formatstats)
 ```
 
 One of the most useful features of the [{papaja}](https://github.com/crsh/papaja) package is the [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 function, which takes a statistical object and formats the output to print the statistical information inline in R Markdown documents. The `apa_print()` function is an easy way to extract and format this statistical information for documents following APA style. However, APA style has some rather strange quirks, and users may want some flexibility in how their statistics are formatted. Moreover, `apa_print()` uses LaTeX syntax, which works great for PDFs but generates images for mathematical symbols when outputting to Word documents. 
 
-The `{formatstats}` package uses APA style as the default, but allow more flexible formatting such as including the leading 0 before numbers with maximum values of 1. It also defaults to using Markdown syntax (instead of LaTeX) for easy conversions to Word documents.
+The `{formatstats}` package uses APA style as the default, but allow more flexible formatting such as including the leading 0 before numbers with maximum values of 1. All functions accept a `type` argument that specifies either `"md"` for Markdown (default) or `"latex"` for LaTeX. This package can format statistical values, statistical objects, and numbers more generally.
 
-## Formatting statistics
+## Formatting statistical values
 
-### Means and error
+### Central tendency and error
 
-Often, we need to include simple descriptive statistics in our documents, such as measures of central tendency and error.
+#### Data vectors
+Often, we need to include simple descriptive statistics in our documents, such as measures of central tendency and error. `{formatstats}` includes a suite of functions that can calculate different summary measures of central tendency (mean or median) and error (confidence interval, standard error, standard deviation, interquartile range) from a numeric data vector. With the base function `format_meanerror()`, you can specify central tendency with the `summary` argument and error with the `error` argument. For instance, `format_meanerror(vec, summary = "mean", error = "se")` calculates mean and standard error.
+
+`{formatstats}` includes a number of wrapper functions that cover common measures of central tendency and error including:
+
+* `format_meanci()`
+* `format_meanse()`
+* `format_meansd()`
+* `format_medianiqr()`
+
+And if you don't want to include error, use `format_mean()` or `format_median()`.
+
+| Code | Output |
+|------|--------|
+| `format_meanerror(mtcars$mpg, error = "ci")` | `r format_meanerror(mtcars$mpg, error = "ci")` |
+| `format_meanci(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
+| `format_medianiqr(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
+| `format_mean(mtcars$mpg)` | `r format_mean(mtcars$mpg)` |
+
+#### Pre-calculated summaries
+
+In addition to calculating values directly from the vectors, these functions can format already-calculated measures.  So if you already have your mean and error calculated, just pass the vector of central tendency, lower error limit, and upper error limit to the `values` argument to format them. For instance, `format_meanci(values = c(12.5, 11.2, 13.7))` produces `r format_meanci(values = c(12.5, 11.2, 13.7))`.
+
+#### Formatting output
+These functions can control many aspects of formatting for the values and labels of summary statistics. Digits after the decimal are controlled with `digits` (default is 1). The `meanlabel` argument defines whether the default abbreviation is used ("M" or "Mdn"), the full word ("Mean" or "Median"), or no label is provided.  Each of these can be italicized  or not with the `italics` argument, subscripts can be included with the `subscript` argument, and units added with the `units` argument. 
+
+| Code | Output |
+|------|--------|
+| `format_mean(mtcars$mpg)` | `r format_mean(mtcars$mpg)` |
+| `format_mean(mtcars$mpg, meanlabel = "word")` | `r format_mean(mtcars$mpg, meanlabel = "word")` |
+| `format_mean(mtcars$mpg, meanlabel = "none")` | `r format_mean(mtcars$mpg, meanlabel = "none")` |
+| `format_mean(mtcars$mpg, italics = FALSE)` | `r format_mean(mtcars$mpg, italics = FALSE)` |
+| `format_mean(mtcars$mpg, subscript = "A")` | `r format_mean(mtcars$mpg, subscript = "A")` |
+| `format_mean(mtcars$mpg, units = "m")` | `r format_mean(mtcars$mpg, units = "m")` |
+
+Error can be displayed in a number of different ways. Setting the `display` argument to `"limits"` (default) includes upper and lower limits in brackets. If intervals rather than limits are preferred, they can be appended after the mean/median with ± using `"pm"` or in parentheses with `"par"`. Error is not displayed if `display = "none"`. The presence of the error label is controlled by the logical argument `errorlabel`. When set to `FALSE`, no error label is included. For confidence intervals, the `cilevel` argument takes a numeric scalar from 0-1 to define the confidence level.
+
+| Code | Output |
+|--------|------|
+| `format_meanci(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
+| `format_meanci(mtcars$mpg, display = "pm")` | `r format_meanci(mtcars$mpg, display = "pm")` |
+| `format_meanci(mtcars$mpg, display = "par")` | `r format_meanci(mtcars$mpg, display = "par")` |
+| `format_meanci(mtcars$mpg, display = "none")` | `r format_meanci(mtcars$mpg, display = "none")` |
+| `format_meanci(mtcars$mpg, errorlabel = FALSE)` | `r format_meanci(mtcars$mpg, errorlabel = FALSE)` |
+| `format_meanci(mtcars$mpg, cilevel = 0.90)` | `r format_meanci(mtcars$mpg, cilevel = 0.90)` |
+
 
 ### P-values
+
+P-values are pretty easy to format with `format_p()`. `digits` controls the number of digits after the decimal, and if the value is lower, `p <` is used. Unfortunately, APA style involves lopping off the leading zero in p-values, but setting `pzero  = TRUE` turns off this silly setting. The p-value label is controlled by `label`, where the user can specify the exact label text. By default, this is a lower case, italicized _p_. Non-italicized can be defined with `italics = FALSE`. P-value labels can be omitted by setting `label = ""`.
+
+| Code | Output |
+|------|--------|
+| `format_p(0.001)`     |  `r format_p(0.001)`      |
+| `format_p(0.001, digits = 2)`     |  `r format_p(0.001, digits = 2)`      |
+| `format_p(0.321, digits = 2)`     |  `r format_p(0.321, digits = 2)`      |
+| `format_p(0.001, pzero = TRUE)`     |  `r format_p(0.001, pzero = TRUE)`      |
+| `format_p(0.001, label = "P")`     |  `r format_p(0.001, label = "P")`      |
+| `format_p(0.001, italics = FALSE)`     |  `r format_p(0.001, italics = FALSE)`      |
+| `format_p(0.001, label = "")`     |  `r format_p(0.001, label = "")`      |
 
 
 ### Bayes factors
 
+Bayes factors are not as standardized in how they are formatted since they are gaining in popularity since the development of the [`{BayesFactor}`](https://cran.r-project.org/package=BayesFactor) package. One issue is that Bayes factors can be referenced from either the alternative hypothesis (H~1~) or the null hypothesis (H~0~). Also, as a ratio, digits after the decimal are more important below 1 than above 1.
+
+To respond to the digits issue, the `format_bf()` function controls digits for Bayes factor less than 1 (`digits1`) separately from those greater than 1 (`digits2`). In fact, the defaults are different for these two arguments. Further Bayes factors can be very large or very small when evidence strongly favors one hypothesis over another. Therfore, the `cutoff` argument set a threshold above which (or below 1/cutoff) the returned value is truncated (e.g., BF > 1000).
+
 | Code | Output |
-|------|--------|
+|--------|------|
 | `format_bf(4321)`     |  `r format_bf(4321)`      |
 | `format_bf(4321, digits1 = 2)`     | `r format_bf(4321, digits1 = 2)`       |
-| `format_bf(4321, italics = FALSE, subscript = "")`     | `r format_bf(4321, italics = FALSE, subscript = "")`       |
-| `format_bf(4321, cutoff = 1000)`     | `r format_bf(4321, cutoff = 1000)`       |
-|      |        |
 | `format_bf(0.04321)`     | `r format_bf(0.04321)`       |
 | `format_bf(0.04321, digits2 = 3)`     | `r format_bf(0.04321, digits2 = 3)`       |
+| `format_bf(4321, cutoff = 1000)`     | `r format_bf(4321, cutoff = 1000)`       |
+|      |        |
 | `format_bf(0.04321, cutoff = 10)`     | `r format_bf(0.04321, cutoff = 10)`       |
 
+The default label for Bayes factors is _BF_~10~. The text of the label can be changed with the `label` argument, where setting `label = ""` omits the label. Italics can be removed with `italics = FALSE`, and the subscript can be set to 01  (`subscript = "01"`) or removed (`subscript = ""`).
+
+| Code | Output |
+|--------|-----|
+| `format_bf(4321)`     |  `r format_bf(4321)`      |
+| `format_bf(4321, italics = FALSE)`     | `r format_bf(4321, italics = FALSE)`       |
+| `format_bf(4321, subscript = "")`     | `r format_bf(4321, subscript = "")`       |
+| `format_bf(4321, label = "Bayes factor", italics = FALSE, subscript = "")`     | `r format_bf(4321, label = "Bayes factor", italics = FALSE, subscript = "")`       |
+| `format_bf(4321, label = "")`     | `r format_bf(4321, label = "")`       |
+
+## Formatting statistical objects
 
 ### Correlations
 
