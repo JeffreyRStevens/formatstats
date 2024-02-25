@@ -30,7 +30,7 @@ format_mean(
   x = NULL,
   summary = "mean",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -44,7 +44,7 @@ format_meanci(
   summary = "mean",
   error = "ci",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -60,7 +60,7 @@ format_meanse(
   summary = "mean",
   error = "se",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -75,7 +75,7 @@ format_meansd(
   summary = "mean",
   error = "sd",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -89,7 +89,7 @@ format_median(
   x = NULL,
   summary = "median",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -103,7 +103,7 @@ format_medianiqr(
   summary = "median",
   error = "iqr",
   values = NULL,
-  digits = 2,
+  digits = 1,
   meanlabel = "abbr",
   italics = TRUE,
   subscript = NULL,
@@ -164,7 +164,7 @@ style. So \code{format_meanci()}, \code{format_meansd()}, \code{format_meanse()}
 \code{format_medianiqr()} are wrappers around \code{format_meanerror()} for specific
 error measures with a default style. To just format the mean or median with
 no error, use \code{format_mean()} or \code{format_median()}, other wrappers around
-\code{format_meanerror()} that drop the error measure.
+\code{format_meanerror()} that drop the error measure. All measures ignore NAs.
 }
 \examples{
 # Print mean and 95\% confidence limits for fuel efficiency

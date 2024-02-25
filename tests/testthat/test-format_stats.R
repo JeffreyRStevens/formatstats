@@ -189,9 +189,9 @@ test_that("format_meanerror() works properly", {
   expect_equal(format_meanerror(x = 1:10, cilevel = 0.9), "_M_ = 5.5, 90% CI [3.7, 7.3]")
   expect_equal(format_meanerror(x = 1:10, errorlabel = FALSE), "_M_ = 5.5,  [3.3, 7.7]")
   expect_equal(format_meanerror(x = 1:10, type = "latex"), "$M$ = 5.5, 95% CI [3.3, 7.7]")
-  expect_equal(format_mean(x = 1:10), "_M_ = 5.50")
-  expect_equal(format_meanci(x = 1:10), "_M_ = 5.50, 95% CI [3.33, 7.67]")
-  expect_equal(format_meansd(x = 1:10), "_M_ = 5.50 (_SD_ = 3.03)")
-  expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (_SE_ = 0.96)")
+  expect_equal(format_mean(x = 1:10), "_M_ = 5.5")
+  expect_equal(format_meanci(x = 1:10), "_M_ = 5.5, 95% CI [3.3, 7.7]")
+  expect_equal(format_meansd(x = 1:10), "_M_ = 5.5 (_SD_ = 3.0)")
+  expect_equal(format_meanse(x = 1:10), "_M_ = 5.5 (_SE_ = 1.0)")
 })
 
