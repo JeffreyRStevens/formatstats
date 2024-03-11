@@ -87,11 +87,11 @@ flexibility in how their statistics are formatted. Moreover,
 but generates images for mathematical symbols when outputting to Word
 documents.</p>
 <p>The <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> package uses APA style as the default,
-but allow more flexible formatting such as including the leading 0
+but allows more flexible formatting such as including the leading 0
 before numbers with maximum values of 1. All functions accept a
 <code>type</code> argument that specifies either <code>"md"</code> for
 Markdown (default) or <code>"latex"</code> for LaTeX. This package can
-format statistical values, statistical objects, and numbers more
+format statistical objects, statistical values, and numbers more
 generally.</p>
 <div class="section level2">
 <h2 id="formatting-statistical-values">Formatting statistical values<a class="anchor" aria-label="anchor" href="#formatting-statistical-values"></a>
@@ -146,7 +146,7 @@ that cover common measures of central tendency and error including:</p>
 <tr class="odd">
 <td><code>format_medianiqr(mtcars$mpg)</code></td>
 <td>
-<em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
+<em>Mdn</em> = 19.2 (<em>IQR</em> = 7.4)</td>
 </tr>
 <tr class="even">
 <td><code>format_mean(mtcars$mpg)</code></td>
@@ -165,7 +165,10 @@ your mean and error calculated, just pass the vector of central
 tendency, lower error limit, and upper error limit to the
 <code>values</code> argument to format them. For instance,
 <code>format_meanci(values = c(12.5, 11.2, 13.7))</code> produces
-<em>M</em> = 12.5, 95% CI [11.2, 13.7].</p>
+<em>M</em> = 12.5, 95% CI [11.2, 13.7]. Make sure you pass the arguments
+in this order, as the function checks whether the send argument is less
+than or equal to the first and the third is greater than or equal to the
+first.</p>
 </div>
 <div class="section level4">
 <h4 id="formatting-output">Formatting output<a class="anchor" aria-label="anchor" href="#formatting-output"></a>
@@ -272,14 +275,14 @@ takes a numeric scalar from 0-1 to define the confidence level.</p>
 <div class="section level3">
 <h3 id="p-values">P-values<a class="anchor" aria-label="anchor" href="#p-values"></a>
 </h3>
-<p>P-values are pretty easy to format with <code><a href="../reference/format_p.html">format_p()</a></code>.
-<code>digits</code> controls the number of digits after the decimal, and
-if the value is lower, <code>p &lt;</code> is used. Unfortunately, APA
-style involves lopping off the leading zero in p-values, but setting
-<code>pzero  = TRUE</code> turns off this silly setting. The p-value
-label is controlled by <code>label</code>, where the user can specify
-the exact label text. By default, this is a lower case, italicized
-<em>p</em>. Non-italicized can be defined with
+<p>P-values are pretty easy to format with <code><a href="../reference/format_p.html">format_p()</a></code>. The
+<code>digits</code> argument controls the number of digits after the
+decimal, and if the value is lower, <code>p &lt;</code> is used.
+Unfortunately, APA style involves lopping off the leading zero in
+p-values, but setting <code>pzero  = TRUE</code> turns off this silly
+setting. The p-value label is controlled by <code>label</code>, where
+the user can specify the exact label text. By default, this is a lower
+case, italicized <em>p</em>. Non-italicized can be defined with
 <code>italics = FALSE</code>. P-value labels can be omitted by setting
 <code>label = ""</code>.</p>
 <table class="table">
@@ -327,18 +330,20 @@ the exact label text. By default, this is a lower case, italicized
 <div class="section level3">
 <h3 id="bayes-factors">Bayes factors<a class="anchor" aria-label="anchor" href="#bayes-factors"></a>
 </h3>
-<p>Bayes factors are not as standardized in how they are formatted since
-they are gaining in popularity since the development of the <a href="https://cran.r-project.org/package=BayesFactor" class="external-link"><code>{BayesFactor}</code></a>
-package. One issue is that Bayes factors can be referenced from either
+<p>The <code><a href="../reference/format_bf.html">format_bf()</a></code> function can either format a vector of
+numeric values or extract and format Bayes factors from a
+<code>BFBayesFactor</code> object from the <a href="https://cran.r-project.org/package=BayesFactor" class="external-link"><code>{BayesFactor}</code></a>
+package. Bayes factors are not as standardized in how they are
+formatted. One issue is that Bayes factors can be referenced from either
 the alternative hypothesis (H<sub>1</sub>) or the null hypothesis
 (H<sub>0</sub>). Also, as a ratio, digits after the decimal are more
 important below 1 than above 1.</p>
 <p>To respond to the digits issue, the <code><a href="../reference/format_bf.html">format_bf()</a></code> function
 controls digits for Bayes factor less than 1 (<code>digits1</code>)
 separately from those greater than 1 (<code>digits2</code>). In fact,
-the defaults are different for these two arguments. Further Bayes
+the defaults are different for these two arguments. Further, Bayes
 factors can be very large or very small when evidence strongly favors
-one hypothesis over another. Therfore, the <code>cutoff</code> argument
+one hypothesis over another. Therefore, the <code>cutoff</code> argument
 set a threshold above which (or below 1/cutoff) the returned value is
 truncated (e.g., BF &gt; 1000).</p>
 <table class="table">
@@ -360,25 +365,21 @@ truncated (e.g., BF &gt; 1000).</p>
 </td>
 </tr>
 <tr class="odd">
-<td><code>format_bf(0.04321)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 0.04</td>
-</tr>
-<tr class="even">
-<td><code>format_bf(0.04321, digits2 = 3)</code></td>
-<td>
-<em>BF</em><sub>10</sub> = 0.043</td>
-</tr>
-<tr class="odd">
 <td><code>format_bf(4321, cutoff = 1000)</code></td>
 <td>
 <em>BF</em><sub>10</sub> &gt; 1000</td>
 </tr>
 <tr class="even">
-<td></td>
-<td></td>
+<td><code>format_bf(0.04321)</code></td>
+<td>
+<em>BF</em><sub>10</sub> = 0.04</td>
 </tr>
 <tr class="odd">
+<td><code>format_bf(0.04321, digits2 = 3)</code></td>
+<td>
+<em>BF</em><sub>10</sub> = 0.043</td>
+</tr>
+<tr class="even">
 <td><code>format_bf(0.04321, cutoff = 10)</code></td>
 <td>
 <em>BF</em><sub>10</sub> &lt; 0.1</td>
@@ -435,30 +436,281 @@ to 01 (<code>subscript = "01"</code>) or removed
 <div class="section level2">
 <h2 id="formatting-statistical-objects">Formatting statistical objects<a class="anchor" aria-label="anchor" href="#formatting-statistical-objects"></a>
 </h2>
+<p>Running a statistical test in R typically returns a list with lots of
+information about the test, often including things like statistical test
+values and p-values. The aim of this set of functions is to extract and
+format statistics for a suite of commonly used statistical objects
+(correlation and t-tests).</p>
 <div class="section level3">
 <h3 id="correlations">Correlations<a class="anchor" aria-label="anchor" href="#correlations"></a>
 </h3>
-<p><em>ρ</em> = -.91, <em>p</em> &lt; .001</p>
-<p>ρ = -.91, p &lt; .001</p>
-<p><em>τ</em> = -.77, <em>p</em> &lt; .001</p>
-<p>τ = -.77, p &lt; .001</p>
+<p>The <code><a href="../reference/format_corr.html">format_corr()</a></code> function inputs objects returned by
+the <code><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test()</a></code> function and detects whether the object is
+from a Pearson, Kendall, or Spearman correlation. It then reports and
+formats the appropriate correlation coefficient and p-value.</p>
+<p>Let’s start by creating a few different correlations.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mpg_disp_corr_pearson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">disp</span>, method <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_corr_spearman</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">disp</span>, method <span class="op">=</span> <span class="st">"spearman"</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_corr_kendall</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html" class="external-link">cor.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">disp</span>, method <span class="op">=</span> <span class="st">"kendall"</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>For Pearson correlations, we get the correlation coefficient and the
+confidence intervals. Since Spearman and Kendall correlations are
+non-parametric, confidence intervals are not returned. Confidence
+intervals can be omitted from Pearson correlations by setting
+<code>ci = FALSE</code>.</p>
+<table class="table">
+<colgroup>
+<col width="58%">
+<col width="41%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_corr(mpg_disp_corr_pearson)</code></td>
+<td>
+<em>r</em> = -.85, 95% CI [-0.92, -0.71], <em>p</em> &lt; .001</td>
+</tr>
+<tr class="even">
+<td><code>format_corr(mpg_disp_corr_pearson, ci = FALSE)</code></td>
+<td>
+<em>r</em> = -.85, <em>p</em> &lt; .001</td>
+</tr>
+<tr class="odd">
+<td><code>format_corr(mpg_disp_corr_spearman)</code></td>
+<td>
+<em>ρ</em> = -.91, <em>p</em> &lt; .001</td>
+</tr>
+<tr class="even">
+<td><code>format_corr(mpg_disp_corr_kendall)</code></td>
+<td>
+<em>τ</em> = -.77, <em>p</em> &lt; .001</td>
+</tr>
+</tbody>
+</table>
+<p>Format the number of digits of coefficients with <code>digits</code>
+and digits of p-values with <code>pdigits</code>. Include the leading
+zeros for coefficients and p-values with <code>pzero = TRUE</code>.
+Remove italics with <code>italics = FALSE</code>.</p>
+<table class="table">
+<colgroup>
+<col width="60%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_corr(mpg_disp_corr_pearson)</code></td>
+<td>
+<em>r</em> = -.85, 95% CI [-0.92, -0.71], <em>p</em> &lt; .001</td>
+</tr>
+<tr class="even">
+<td><code>format_corr(mpg_disp_corr_pearson, digits = 1, pdigits = 2)</code></td>
+<td>
+<em>r</em> = -.8, 95% CI [-0.9, -0.7], <em>p</em> &lt; .01</td>
+</tr>
+<tr class="odd">
+<td><code>format_corr(mpg_disp_corr_pearson, pzero = TRUE)</code></td>
+<td>
+<em>r</em> = -0.85, 95% CI [-0.92, -0.71], <em>p</em> &lt;
+0.001</td>
+</tr>
+<tr class="even">
+<td><code>format_corr(mpg_disp_corr_pearson, italics = FALSE)</code></td>
+<td>r = -.85, 95% CI [-0.92, -0.71], p &lt; .001</td>
+</tr>
+<tr class="odd">
+<td><code>format_corr(mpg_disp_corr_spearman, italics = FALSE)</code></td>
+<td>ρ = -.91, p &lt; .001</td>
+</tr>
+<tr class="even">
+<td><code>format_corr(mpg_disp_corr_kendall, italics = FALSE)</code></td>
+<td>τ = -.77, p &lt; .001</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level3">
 <h3 id="t-tests">T-tests<a class="anchor" aria-label="anchor" href="#t-tests"></a>
 </h3>
+<p>The <code><a href="../reference/format_ttest.html">format_ttest()</a></code> function inputs objects returned by
+the <code><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test()</a></code> or <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test()</a></code> functions and
+detects whether the object is from a Student’s or Wilcoxon t-test,
+including one-sample, independent-sample, and paired-sample versions. It
+then reports and formats the mean value (or mean difference), confidence
+intervals for mean value/difference, appropriate test statistic, degrees
+of freedom (for parametric tests), and p-value.</p>
+<p>Let’s start by creating a few different t-tests</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mpg_disp_ttest_gear_carb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">carb</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_ttest_gear_carb_paired</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">carb</span>, paired <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_ttest_gear_carb_onesample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, mu <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_wtest_gear_carb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">carb</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_wtest_gear_carb_paired</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, <span class="va">mtcars</span><span class="op">$</span><span class="va">carb</span>, paired <span class="op">=</span> <span class="cn">TRUE</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">mpg_disp_wtest_gear_carb_onesample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></span><span class="op">(</span><span class="va">mtcars</span><span class="op">$</span><span class="va">gear</span>, mu <span class="op">=</span> <span class="fl">4</span>, exact <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>For Student’s t-tests, we get the mean value or difference and the
+confidence intervals. Means and confidence intervals can be omitted by
+setting <code>full = FALSE</code>.</p>
+<table class="table">
+<colgroup>
+<col width="58%">
+<col width="41%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb)</code></td>
+<td>
+<em>M</em> = 0.9, 95% CI [0.2, 1.5], <em>t</em>(43.4) = 2.8,
+<em>p</em> = .008</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb_paired)</code></td>
+<td>
+<em>M</em> = 0.9, 95% CI [0.3, 1.4], <em>t</em>(31) = 3.1,
+<em>p</em> = .004</td>
+</tr>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb_onesample)</code></td>
+<td>
+<em>M</em> = 3.7, 95% CI [3.4, 4.0], <em>t</em>(31) = -2.4,
+<em>p</em> = .023</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb_onesample, full = FALSE)</code></td>
+<td>
+<em>t</em>(31) = -2.4, <em>p</em> = .023</td>
+</tr>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_wtest_gear_carb)</code></td>
+<td>
+<em>W</em> = 727.5, <em>p</em> = .003</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_wtest_gear_carb_paired)</code></td>
+<td>
+<em>V</em> = 267.0, <em>p</em> = .004</td>
+</tr>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_wtest_gear_carb_onesample)</code></td>
+<td>
+<em>V</em> = 52.5, <em>p</em> = .027</td>
+</tr>
+</tbody>
+</table>
+<p>Format the number of digits of coefficients with <code>digits</code>
+and digits of p-values with <code>pdigits</code>. Include the leading
+zeros for coefficients and p-values with <code>pzero = TRUE</code>.
+Remove italics with <code>italics = FALSE</code>.</p>
+<table class="table">
+<colgroup>
+<col width="60%">
+<col width="40%">
+</colgroup>
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb)</code></td>
+<td>
+<em>M</em> = 0.9, 95% CI [0.2, 1.5], <em>t</em>(43.4) = 2.8,
+<em>p</em> = .008</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb, digits = 2, pdigits = 2)</code></td>
+<td>
+<em>M</em> = 0.88, 95% CI [0.24, 1.51], <em>t</em>(43.40) = 2.79,
+<em>p</em> &lt; .01</td>
+</tr>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb, pzero = TRUE)</code></td>
+<td>
+<em>M</em> = 0.9, 95% CI [0.2, 1.5], <em>t</em>(43.4) = 2.8,
+<em>p</em> = 0.008</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_ttest_gear_carb, italics = FALSE)</code></td>
+<td>M = 0.9, 95% CI [0.2, 1.5], t(43.4) = 2.8, p = .008</td>
+</tr>
+<tr class="odd">
+<td><code>format_ttest(mpg_disp_wtest_gear_carb)</code></td>
+<td>
+<em>W</em> = 727.5, <em>p</em> = .003</td>
+</tr>
+<tr class="even">
+<td><code>format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)</code></td>
+<td>W = 727.5, p = .003</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section level2">
 <h2 id="formatting-numbers">Formatting numbers<a class="anchor" aria-label="anchor" href="#formatting-numbers"></a>
 </h2>
-<div class="section level3">
-<h3 id="scientific-notation">Scientific notation<a class="anchor" aria-label="anchor" href="#scientific-notation"></a>
-</h3>
-</div>
-<div class="section level3">
-<h3 id="other-numbers">Other numbers<a class="anchor" aria-label="anchor" href="#other-numbers"></a>
-</h3>
-</div>
+<p>In addition to formatting specific statistics, this package can
+format numbers more generally. The <code><a href="../reference/format_num.html">format_num()</a></code> function
+controls general formatting of numbers of digits with
+<code>digits</code> and the presence of the leading zero with
+<code>pzero</code>.</p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_num(0.1234)</code></td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td><code>format_num(0.1234, digits = 2)</code></td>
+<td>0.12</td>
+</tr>
+<tr class="odd">
+<td><code>format_num(0.1234, pzero = FALSE)</code></td>
+<td>.1</td>
+</tr>
+</tbody>
+</table>
+<p>For large or small values, using scientific notation may be a more
+useful way to format the numbers. The <code><a href="../reference/format_scientific.html">format_scientific()</a></code>
+function converts to scientific notation, again offering control of the
+number of <code>digits</code> as well as whether output
+<code>type</code> is Markdown or LaTeX.</p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>format_scientific(1234)</code></td>
+<td>1.2×10<sup>3</sup>
+</td>
+</tr>
+<tr class="even">
+<td><code>format_scientific(0.0000001234)</code></td>
+<td>1.2×10<sup>-7</sup>
+</td>
+</tr>
+<tr class="odd">
+<td><code>format_scientific(0.0000001234, digits = 2)</code></td>
+<td>1.23×10<sup>-7</sup>
+</td>
+</tr>
+</tbody>
+</table>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
