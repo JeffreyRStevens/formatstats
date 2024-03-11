@@ -76,7 +76,8 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a></span><span class="op">)</span></span></code></pre></div>
-<p>One of the most useful features of the <a href="https://github.com/crsh/papaja" class="external-link">{papaja}</a> package is the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a>
+<p>One of the most useful features of the <a href="https://github.com/crsh/papaja" class="external-link"><code>{papaja}</code></a> package
+is the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a>
 function, which takes a statistical object and formats the output to
 print the statistical information inline in R Markdown documents. The
 <code>apa_print()</code> function is an easy way to extract and format
@@ -108,21 +109,21 @@ documents, such as measures of central tendency and error.
 calculate different summary measures of central tendency (mean or
 median) and error (confidence interval, standard error, standard
 deviation, interquartile range) from a numeric data vector. With the
-base function <code><a href="../reference/format_meanerror.html">format_meanerror()</a></code>, you can specify central
+base function <code><a href="../reference/format_summary.html">format_summary()</a></code>, you can specify central
 tendency with the <code>summary</code> argument and error with the
 <code>error</code> argument. For instance,
-<code>format_meanerror(vec, summary = "mean", error = "se")</code>
+<code>format_summary(vec, summary = "mean", error = "se")</code>
 calculates mean and standard error.</p>
 <p><a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> includes a number of wrapper functions
 that cover common measures of central tendency and error including:</p>
 <ul>
-<li><code><a href="../reference/format_meanerror.html">format_meanci()</a></code></li>
-<li><code><a href="../reference/format_meanerror.html">format_meanse()</a></code></li>
-<li><code><a href="../reference/format_meanerror.html">format_meansd()</a></code></li>
-<li><code><a href="../reference/format_meanerror.html">format_medianiqr()</a></code></li>
+<li><code><a href="../reference/format_summary.html">format_meanci()</a></code></li>
+<li><code><a href="../reference/format_summary.html">format_meanse()</a></code></li>
+<li><code><a href="../reference/format_summary.html">format_meansd()</a></code></li>
+<li><code><a href="../reference/format_summary.html">format_medianiqr()</a></code></li>
 </ul>
 <p>And if you don’t want to include error, use
-<code><a href="../reference/format_meanerror.html">format_mean()</a></code> or <code><a href="../reference/format_meanerror.html">format_median()</a></code>.</p>
+<code><a href="../reference/format_summary.html">format_mean()</a></code> or <code><a href="../reference/format_summary.html">format_median()</a></code>.</p>
 <table class="table">
 <colgroup>
 <col width="42%">
@@ -134,7 +135,7 @@ that cover common measures of central tendency and error including:</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>format_meanerror(mtcars$mpg, error = "ci")</code></td>
+<td><code>format_summary(mtcars$mpg, error = "ci")</code></td>
 <td>
 <em>M</em> = 20.1, 95% CI [17.9, 22.3]</td>
 </tr>
@@ -176,7 +177,7 @@ first.</p>
 <p>These functions can control many aspects of formatting for the values
 and labels of summary statistics. Digits after the decimal are
 controlled with <code>digits</code> (default is 1). The
-<code>meanlabel</code> argument defines whether the default abbreviation
+<code>tendlabel</code> argument defines whether the default abbreviation
 is used (“M” or “Mdn”), the full word (“Mean” or “Median”), or no label
 is provided. Each of these can be italicized or not with the
 <code>italics</code> argument, subscripts can be included with the
@@ -194,12 +195,12 @@ is provided. Each of these can be italicized or not with the
 <em>M</em> = 20.1</td>
 </tr>
 <tr class="even">
-<td><code>format_mean(mtcars$mpg, meanlabel = "word")</code></td>
+<td><code>format_mean(mtcars$mpg, tendlabel = "word")</code></td>
 <td>
 <em>Mean</em> = 20.1</td>
 </tr>
 <tr class="odd">
-<td><code>format_mean(mtcars$mpg, meanlabel = "none")</code></td>
+<td><code>format_mean(mtcars$mpg, tendlabel = "none")</code></td>
 <td>20.1</td>
 </tr>
 <tr class="even">
@@ -720,7 +721,7 @@ number of <code>digits</code> as well as whether output
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://jeffreyrstevens.quarto.pub/" class="external-link">Jeffrey R. Stevens</a>.</p>
+<p>Developed by <a href="https://jeffreyrstevens.github.io/" class="external-link">Jeffrey R. Stevens</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

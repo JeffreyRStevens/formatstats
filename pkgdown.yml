@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   formatstats: formatstats.html
-last_built: 2024-03-11T16:56Z
+last_built: 2024-03-11T19:20Z
 urls:
   reference: https://jeffreyrstevens.github.io/formatstats/reference
   article: https://jeffreyrstevens.github.io/formatstats/articles
