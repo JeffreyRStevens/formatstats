@@ -194,14 +194,26 @@ Format the number of digits of coefficients with `digits` and digits of p-values
 | `format_ttest(mpg_disp_ttest_gear_carb, digits = 2, pdigits = 2)` | `r format_ttest(mpg_disp_ttest_gear_carb, digits = 2, pdigits = 2)` |
 | `format_ttest(mpg_disp_ttest_gear_carb, pzero = TRUE)` | `r format_ttest(mpg_disp_ttest_gear_carb, pzero = TRUE)` |
 | `format_ttest(mpg_disp_ttest_gear_carb, italics = FALSE)` | `r format_ttest(mpg_disp_ttest_gear_carb, italics = FALSE)` |
+| `format_ttest(mpg_disp_wtest_gear_carb)` | `r format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` |
 | `format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` | `r format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` |
 
 ## Formatting numbers
 
-### Scientific notation
+In addition to extracting the appropriate information, this package flexibly formats the numbers that are extracted. The `format_num()` function control general formatting of numbers of digits with `digits` and the presence of the leading zero with `pzero`.
 
+| Code | Output |
+|---------|------|
+| `format_num(0.1234)` | `r format_num(0.1234)` |
+| `format_num(0.1234, digits = 1)` | `r format_num(0.1234, digits = 1)` |
+| `format_num(0.1234, pzero = FALSE)` | `r format_num(0.1234, pzero = FALSE)` |
 
-### Other numbers
+For large or small values, using scientific notation may be a more useful way to format the numbers. The `format_scientific()` function converts to scientific notation, again offering control of the number of `digits` as well as whether output `type` is Markdown or LaTeX.
+
+| Code | Output |
+|---------|------|
+| `format_scientific(1234)` | `r format_scientific(1234)` |
+| `format_scientific(0.0000001234)` | `r format_scientific(0.0000001234)` |
+| `format_scientific(0.0000001234, digits = 2)` | `r format_scientific(0.0000001234, digits = 2)` |
 
 
 
