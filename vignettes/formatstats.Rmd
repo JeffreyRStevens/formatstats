@@ -23,7 +23,7 @@ library(formatstats)
 library(formatstats)
 ```
 
-One of the most useful features of the [{papaja}](https://github.com/crsh/papaja) package is the [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
+One of the most useful features of the [`{papaja}`](https://github.com/crsh/papaja) package is the [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 function, which takes a statistical object and formats the output to print the statistical information inline in R Markdown documents. The `apa_print()` function is an easy way to extract and format this statistical information for documents following APA style. However, APA style has some rather strange quirks, and users may want some flexibility in how their statistics are formatted. Moreover, `apa_print()` uses LaTeX syntax, which works great for PDFs but generates images for mathematical symbols when outputting to Word documents. 
 
 The `{formatstats}` package uses APA style as the default, but allows more flexible formatting such as including the leading 0 before numbers with maximum values of 1. All functions accept a `type` argument that specifies either `"md"` for Markdown (default) or `"latex"` for LaTeX. This package can format statistical objects, statistical values, and numbers more generally.
@@ -34,7 +34,7 @@ The `{formatstats}` package uses APA style as the default, but allows more flexi
 ### Central tendency and error
 
 #### Data vectors
-Often, we need to include simple descriptive statistics in our documents, such as measures of central tendency and error. `{formatstats}` includes a suite of functions that can calculate different summary measures of central tendency (mean or median) and error (confidence interval, standard error, standard deviation, interquartile range) from a numeric data vector. With the base function `format_meanerror()`, you can specify central tendency with the `summary` argument and error with the `error` argument. For instance, `format_meanerror(vec, summary = "mean", error = "se")` calculates mean and standard error.
+Often, we need to include simple descriptive statistics in our documents, such as measures of central tendency and error. `{formatstats}` includes a suite of functions that can calculate different summary measures of central tendency (mean or median) and error (confidence interval, standard error, standard deviation, interquartile range) from a numeric data vector. With the base function `format_summary()`, you can specify central tendency with the `summary` argument and error with the `error` argument. For instance, `format_summary(vec, summary = "mean", error = "se")` calculates mean and standard error.
 
 `{formatstats}` includes a number of wrapper functions that cover common measures of central tendency and error including:
 
@@ -47,7 +47,7 @@ And if you don't want to include error, use `format_mean()` or `format_median()`
 
 | Code | Output |
 |------|--------|
-| `format_meanerror(mtcars$mpg, error = "ci")` | `r format_meanerror(mtcars$mpg, error = "ci")` |
+| `format_summary(mtcars$mpg, error = "ci")` | `r format_summary(mtcars$mpg, error = "ci")` |
 | `format_meanci(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
 | `format_medianiqr(mtcars$mpg)` | `r format_medianiqr(mtcars$mpg)` |
 | `format_mean(mtcars$mpg)` | `r format_mean(mtcars$mpg)` |
@@ -57,13 +57,13 @@ And if you don't want to include error, use `format_mean()` or `format_median()`
 In addition to calculating values directly from the vectors, these functions can format already-calculated measures.  So if you already have your mean and error calculated, just pass the vector of central tendency, lower error limit, and upper error limit to the `values` argument to format them. For instance, `format_meanci(values = c(12.5, 11.2, 13.7))` produces `r format_meanci(values = c(12.5, 11.2, 13.7))`. Make sure you pass the arguments in this order, as the function checks whether the send argument is less than or equal to the first and the third is greater than or equal to the first.
 
 #### Formatting output
-These functions can control many aspects of formatting for the values and labels of summary statistics. Digits after the decimal are controlled with `digits` (default is 1). The `meanlabel` argument defines whether the default abbreviation is used ("M" or "Mdn"), the full word ("Mean" or "Median"), or no label is provided.  Each of these can be italicized  or not with the `italics` argument, subscripts can be included with the `subscript` argument, and units added with the `units` argument. 
+These functions can control many aspects of formatting for the values and labels of summary statistics. Digits after the decimal are controlled with `digits` (default is 1). The `tendlabel` argument defines whether the default abbreviation is used ("M" or "Mdn"), the full word ("Mean" or "Median"), or no label is provided.  Each of these can be italicized  or not with the `italics` argument, subscripts can be included with the `subscript` argument, and units added with the `units` argument. 
 
 | Code | Output |
 |------|--------|
 | `format_mean(mtcars$mpg)` | `r format_mean(mtcars$mpg)` |
-| `format_mean(mtcars$mpg, meanlabel = "word")` | `r format_mean(mtcars$mpg, meanlabel = "word")` |
-| `format_mean(mtcars$mpg, meanlabel = "none")` | `r format_mean(mtcars$mpg, meanlabel = "none")` |
+| `format_mean(mtcars$mpg, tendlabel = "word")` | `r format_mean(mtcars$mpg, tendlabel = "word")` |
+| `format_mean(mtcars$mpg, tendlabel = "none")` | `r format_mean(mtcars$mpg, tendlabel = "none")` |
 | `format_mean(mtcars$mpg, italics = FALSE)` | `r format_mean(mtcars$mpg, italics = FALSE)` |
 | `format_mean(mtcars$mpg, subscript = "A")` | `r format_mean(mtcars$mpg, subscript = "A")` |
 | `format_mean(mtcars$mpg, units = "m")` | `r format_mean(mtcars$mpg, units = "m")` |

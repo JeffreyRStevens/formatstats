@@ -201,13 +201,15 @@ format_ttest <- function(x,
 #' Format Bayes factors
 #'
 #' @description
-#' `format_bf()` can input either a [BayesFactor] object or a vectors of Bayes
-#' factor values. By default, this function rounds Bayes factors greater than 1
-#' to one decimal place and Bayes factors less than 1 to two decimal places.
-#' Values greater than 1000 or less than 1/1000 are formatted using scientific
-#' notation. Cutoffs can be set that format the values as greater than or less
-#' than the cutoffs (e.g., BF > 1000 or BF < 0.001). Numbers of digits, cutoffs,
-#' italics, and label subscripts are all customizable.
+#' `format_bf()` can input either a
+#' [{BayesFactor}](https://cran.r-project.org/package=BayesFactor)
+#' object or a vector of Bayes factor values. By default, this function rounds
+#' Bayes factors greater than 1 to one decimal place and Bayes factors less
+#' than 1 to two decimal places. Values greater than 1000 or less than 1/1000
+#' are formatted using scientific notation. Cutoffs can be set that format the
+#' values as greater than or less than the cutoffs (e.g., BF > 1000 or
+#' BF < 0.001). Numbers of digits, cutoffs, italics, and label subscripts are
+#' all customizable.
 #'
 #' @param x BayesFactor object or vector of numeric Bayes factor values
 #' @param digits1 Number of digits after the decimal for Bayes factors > 1
@@ -385,22 +387,21 @@ format_p <- function(x,
 }
 
 
-#' Calculate and format mean and error
+#' Calculate and format summary statistics of central tendency and error
 #'
-#' `format_meanerror()` is a general function that allows you to either
+#' `format_summary()` is a general function that allows you to either
 #' automatically calculate mean/median and a measure of error from a data vector
 #' or specify already calculated a mean/median and either an error interval or
 #' error limits. Error measures include confidence intervals, standard
 #' deviation, and standard error of the mean. Each of those has a specific
 #' function that formats means and those error measures using APA (7th edition)
 #' style. So `format_meanci()`, `format_meansd()`, `format_meanse()`, and
-#' `format_medianiqr()` are wrappers around `format_meanerror()` for specific
+#' `format_medianiqr()` are wrappers around `format_summary()` for specific
 #' error measures with a default style. To just format the mean or median with
-#' no error, use `format_mean()` or `format_median()`, other wrappers around
-#' `format_meanerror()` that drop the error measure. All measures ignore NAs.
+#' no error, use `format_mean()` or `format_median()`. All measures ignore NAs.
 #'
 #' @param x Numeric vector of data to calculate mean and error
-#' @param summary Character vector specifying summary measure of central
+#' @param tendency Character vector specifying measure of central
 #' tendency ("mean" = mean, "median" = median)
 #' @param error Character vector specifying error type ("ci" = confidence
 #' interval, "se" = standard error of the mean, "sd" = standard deviation, "iqr"
@@ -408,7 +409,7 @@ format_p <- function(x,
 #' @param values Numeric vector of mean and interval or mean and lower and upper
 #' limits
 #' @param digits Number of digits after the decimal for means and error
-#' @param meanlabel Formatting for mean label ("abbr" = M, "word" = Mean,
+#' @param tendlabel Formatting for tendency label ("abbr" = M, "word" = Mean,
 #' "none" = no label)
 #' @param italics Logical for whether mean label should be italicized
 #' @param subscript Character string to include as subscript with mean label
@@ -442,13 +443,13 @@ format_p <- function(x,
 #' # Print mean and 90% confidence limits with units
 #' format_meanci(mtcars$mpg, units = "cm", cilevel = 0.9)
 #' # Print three-digit mean with subscript in LaTeX
-#' format_meanerror(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
-format_meanerror <- function(x = NULL,
-                             summary = "mean",
+#' format_summary(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
+format_summary <- function(x = NULL,
+                             tendency = "mean",
                              error = "ci",
                              values = NULL,
                              digits = 1,
-                             meanlabel = "abbr",
+                             tendlabel = "abbr",
                              italics = TRUE,
                              subscript = NULL,
                              units = NULL,
@@ -459,11 +460,11 @@ format_meanerror <- function(x = NULL,
   # Check arguments
   if (!is.null(x)) {
     stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
-    stopifnot('Specify `summary` as "mean" or "median".' = summary %in% c("mean", "median"))
+    stopifnot('Specify `tendency` as "mean" or "median".' = tendency %in% c("mean", "median"))
     stopifnot('Specify `error` as "ci", "sd", "se", or "iqr".' = error %in% c("ci", "sd", "se", "iqr"))
-    xsummary <- dplyr::case_when(
-      identical(summary, "mean") ~ mean(x, na.rm = TRUE),
-      identical(summary, "median") ~ median(x, na.rm = TRUE)
+    xtendency <- dplyr::case_when(
+      identical(tendency, "mean") ~ mean(x, na.rm = TRUE),
+      identical(tendency, "median") ~ median(x, na.rm = TRUE)
     )
     xn <- sum(!is.na(x))
     stopifnot("Less than two non-missing values in vector, so no confidence interval can be computed." = xn > 1)
@@ -473,37 +474,37 @@ format_meanerror <- function(x = NULL,
     xci <- stats::qt(xlimit, df = (xn - 1)) * xse
     xiqr <- stats::IQR(x)
     xlower <- dplyr::case_when(
-      identical(error, "ci") ~ xsummary - xci,
-      identical(error, "sd") ~ xsummary - xsd,
-      identical(error, "se") ~ xsummary - xse,
-      identical(error, "iqr") ~ xsummary - xiqr
+      identical(error, "ci") ~ xtendency - xci,
+      identical(error, "sd") ~ xtendency - xsd,
+      identical(error, "se") ~ xtendency - xse,
+      identical(error, "iqr") ~ xtendency - xiqr
     )
     xupper <-  dplyr::case_when(
-      identical(error, "ci") ~ xsummary + xci,
-      identical(error, "sd") ~ xsummary + xsd,
-      identical(error, "se") ~ xsummary + xse,
-      identical(error, "iqr") ~ xsummary + xiqr
+      identical(error, "ci") ~ xtendency + xci,
+      identical(error, "sd") ~ xtendency + xsd,
+      identical(error, "se") ~ xtendency + xse,
+      identical(error, "iqr") ~ xtendency + xiqr
     )
-    xinterval <- xsummary - xlower
+    xinterval <- xtendency - xlower
   } else if (!is.null(values)) {
     stopifnot("Argument `values` must be a numeric vector." = is.numeric(values))
     stopifnot("Argument `values` must be a vector with two or three elements." = length(values) %in% c(2, 3))
     if (length(values) == 2) {
-      xsummary <- values[1]
+      xtendency <- values[1]
       xinterval <- values[2]
-      xlower <- xsummary - xinterval
-      xupper <- xsummary + xinterval
+      xlower <- xtendency - xinterval
+      xupper <- xtendency + xinterval
     } else {
       stopifnot("Argument `values` must include the mean followed by the lower CI limit then the upper CI limit." = values[1] >= values[2] & values[1] <= values[3])
-      xsummary <- values[1]
+      xtendency <- values[1]
       xlower <- values[2]
       xupper <- values[3]
-      xinterval <- xsummary - xlower
+      xinterval <- xtendency - xlower
     }
   } else {
     stop("You must include either the `x` or `values` argument.")
   }
-  stopifnot('Specify `meanlabel` as "abbr", "word", or "none".' = meanlabel %in% c("abbr", "word", "none"))
+  stopifnot('Specify `tendlabel` as "abbr", "word", or "none".' = tendlabel %in% c("abbr", "word", "none"))
   stopifnot("The `units` argument must be a character vector or NULL" = is.character(units) | is.null(units))
   stopifnot('Specify `display` as "limits", "pm", "par", or "none".' = display %in% c("limits", "pm", "par", "none"))
 
@@ -514,17 +515,17 @@ format_meanerror <- function(x = NULL,
     .default = ""
   )
   mean_lab <- dplyr::case_when(
-    identical(meanlabel, "none") ~ "",
-    identical(summary, "mean") & identical(meanlabel, "abbr") ~
+    identical(tendlabel, "none") ~ "",
+    identical(tendency, "mean") & identical(tendlabel, "abbr") ~
       paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-    identical(summary, "mean") & identical(meanlabel, "word") ~
+    identical(tendency, "mean") & identical(tendlabel, "word") ~
       paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-    identical(summary, "median") & identical(meanlabel, "abbr") ~
+    identical(tendency, "median") & identical(tendlabel, "abbr") ~
       paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-    identical(summary, "median") & identical(meanlabel, "word") ~
+    identical(tendency, "median") & identical(tendlabel, "word") ~
       paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
   )
-  full_mean <- paste0(mean_lab, format_num(xsummary, digits = digits), unit)
+  full_mean <- paste0(mean_lab, format_num(xtendency, digits = digits), unit)
 
   # Add error
   error_lab <- dplyr::case_when(
@@ -543,29 +544,29 @@ format_meanerror <- function(x = NULL,
   paste0(full_mean, full_error)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_mean <- function(x = NULL,
-                        summary = "mean",
+                        tendency = "mean",
                         values = NULL,
                         digits = 1,
-                        meanlabel = "abbr",
+                        tendlabel = "abbr",
                         italics = TRUE,
                         subscript = NULL,
                         units = NULL,
                         display = "none",
                         type = "md") {
-  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_summary(x = x, tendency = tendency, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_meanci <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "ci",
                           values = NULL,
                           digits = 1,
-                          meanlabel = "abbr",
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
@@ -573,72 +574,72 @@ format_meanci <- function(x = NULL,
                           cilevel = 0.95,
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_meanse <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "se",
                           values = NULL,
                           digits = 1,
-                          meanlabel = "abbr",
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_meansd <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "sd",
                           values = NULL,
                           digits = 1,
-                          meanlabel = "abbr",
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
-  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_median <- function(x = NULL,
-                          summary = "median",
+                          tendency = "median",
                           values = NULL,
                           digits = 1,
-                          meanlabel = "abbr",
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
                           display = "none",
                           type = "md") {
-  format_meanerror(x = x, summary = summary, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_summary(x = x, tendency = tendency, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
-#' @rdname format_meanerror
+#' @rdname format_summary
 #' @export
 format_medianiqr <- function(x = NULL,
-                             summary = "median",
+                             tendency = "median",
                              error = "iqr",
                              values = NULL,
                              digits = 1,
-                             meanlabel = "abbr",
+                             tendlabel = "abbr",
                              italics = TRUE,
                              subscript = NULL,
                              units = NULL,
                              display = "par",
                              errorlabel = TRUE,
                              type = "md") {
-  format_meanerror(x = x, summary = summary, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
