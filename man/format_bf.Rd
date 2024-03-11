@@ -42,13 +42,15 @@ Bayes factor formatted in Markdown or LaTeX. If Bayes factor is above or
 below \code{cutoff}, \verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < 1 / <cutoff>} is used.
 }
 \description{
-\code{format_bf()} can input either a \link{BayesFactor} object or a vectors of Bayes
-factor values. By default, this function rounds Bayes factors greater than 1
-to one decimal place and Bayes factors less than 1 to two decimal places.
-Values greater than 1000 or less than 1/1000 are formatted using scientific
-notation. Cutoffs can be set that format the values as greater than or less
-than the cutoffs (e.g., BF > 1000 or BF < 0.001). Numbers of digits, cutoffs,
-italics, and label subscripts are all customizable.
+\code{format_bf()} can input either a
+\href{https://cran.r-project.org/package=BayesFactor}{{BayesFactor}}
+object or a vector of Bayes factor values. By default, this function rounds
+Bayes factors greater than 1 to one decimal place and Bayes factors less
+than 1 to two decimal places. Values greater than 1000 or less than 1/1000
+are formatted using scientific notation. Cutoffs can be set that format the
+values as greater than or less than the cutoffs (e.g., BF > 1000 or
+BF < 0.001). Numbers of digits, cutoffs, italics, and label subscripts are
+all customizable.
 }
 \examples{
 # Format Bayes factors > 1
