@@ -13,14 +13,16 @@
 #' @examples
 #' format_num(pi, digits = 2)
 #' format_num(pi, digits = 4)
-format_num <- function(x, digits = 1, pzero = TRUE) {
+format_num <- function(x,
+                       digits = 1,
+                       pzero = TRUE) {
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = digits >= 0)
 
   # Format number
-  num <- dplyr::case_when(
+  dplyr::case_when(
     !pzero ~ sub("0\\.", "\\.", formatC(x, digits = digits, format = "f")),
     pzero ~ formatC(x, digits = digits, format = "f")
   )
