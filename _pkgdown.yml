@@ -11,12 +11,12 @@ reference:
   - format_scientific
 - title: Format statistics
   contents:
-  - format_meanerror
+  - format_summary
   - format_p
   - format_bf
   - format_corr
   - format_ttest
 
-authors: 
+authors:
   Jeffrey R. Stevens:
-    href: https://jeffreyrstevens.quarto.pub/
+    href: https://jeffreyrstevens.github.io/
