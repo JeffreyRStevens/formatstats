@@ -26,7 +26,7 @@ library(formatstats)
 One of the most useful features of the [{papaja}](https://github.com/crsh/papaja) package is the [`apa_print()`](https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests)
 function, which takes a statistical object and formats the output to print the statistical information inline in R Markdown documents. The `apa_print()` function is an easy way to extract and format this statistical information for documents following APA style. However, APA style has some rather strange quirks, and users may want some flexibility in how their statistics are formatted. Moreover, `apa_print()` uses LaTeX syntax, which works great for PDFs but generates images for mathematical symbols when outputting to Word documents. 
 
-The `{formatstats}` package uses APA style as the default, but allow more flexible formatting such as including the leading 0 before numbers with maximum values of 1. All functions accept a `type` argument that specifies either `"md"` for Markdown (default) or `"latex"` for LaTeX. This package can format statistical objects, statistical values, and numbers more generally.
+The `{formatstats}` package uses APA style as the default, but allows more flexible formatting such as including the leading 0 before numbers with maximum values of 1. All functions accept a `type` argument that specifies either `"md"` for Markdown (default) or `"latex"` for LaTeX. This package can format statistical objects, statistical values, and numbers more generally.
 
 
 ## Formatting statistical values
@@ -49,12 +49,12 @@ And if you don't want to include error, use `format_mean()` or `format_median()`
 |------|--------|
 | `format_meanerror(mtcars$mpg, error = "ci")` | `r format_meanerror(mtcars$mpg, error = "ci")` |
 | `format_meanci(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
-| `format_medianiqr(mtcars$mpg)` | `r format_meanci(mtcars$mpg)` |
+| `format_medianiqr(mtcars$mpg)` | `r format_medianiqr(mtcars$mpg)` |
 | `format_mean(mtcars$mpg)` | `r format_mean(mtcars$mpg)` |
 
 #### Pre-calculated summaries
 
-In addition to calculating values directly from the vectors, these functions can format already-calculated measures.  So if you already have your mean and error calculated, just pass the vector of central tendency, lower error limit, and upper error limit to the `values` argument to format them. For instance, `format_meanci(values = c(12.5, 11.2, 13.7))` produces `r format_meanci(values = c(12.5, 11.2, 13.7))`.
+In addition to calculating values directly from the vectors, these functions can format already-calculated measures.  So if you already have your mean and error calculated, just pass the vector of central tendency, lower error limit, and upper error limit to the `values` argument to format them. For instance, `format_meanci(values = c(12.5, 11.2, 13.7))` produces `r format_meanci(values = c(12.5, 11.2, 13.7))`. Make sure you pass the arguments in this order, as the function checks whether the send argument is less than or equal to the first and the third is greater than or equal to the first.
 
 #### Formatting output
 These functions can control many aspects of formatting for the values and labels of summary statistics. Digits after the decimal are controlled with `digits` (default is 1). The `meanlabel` argument defines whether the default abbreviation is used ("M" or "Mdn"), the full word ("Mean" or "Median"), or no label is provided.  Each of these can be italicized  or not with the `italics` argument, subscripts can be included with the `subscript` argument, and units added with the `units` argument. 
@@ -82,7 +82,7 @@ Error can be displayed in a number of different ways. Setting the `display` argu
 
 ### P-values
 
-P-values are pretty easy to format with `format_p()`. `digits` controls the number of digits after the decimal, and if the value is lower, `p <` is used. Unfortunately, APA style involves lopping off the leading zero in p-values, but setting `pzero  = TRUE` turns off this silly setting. The p-value label is controlled by `label`, where the user can specify the exact label text. By default, this is a lower case, italicized _p_. Non-italicized can be defined with `italics = FALSE`. P-value labels can be omitted by setting `label = ""`.
+P-values are pretty easy to format with `format_p()`. The `digits` argument controls the number of digits after the decimal, and if the value is lower, `p <` is used. Unfortunately, APA style involves lopping off the leading zero in p-values, but setting `pzero  = TRUE` turns off this silly setting. The p-value label is controlled by `label`, where the user can specify the exact label text. By default, this is a lower case, italicized _p_. Non-italicized can be defined with `italics = FALSE`. P-value labels can be omitted by setting `label = ""`.
 
 | Code | Output |
 |------|--------|
@@ -97,18 +97,17 @@ P-values are pretty easy to format with `format_p()`. `digits` controls the numb
 
 ### Bayes factors
 
-Bayes factors are not as standardized in how they are formatted since they are gaining in popularity since the development of the [`{BayesFactor}`](https://cran.r-project.org/package=BayesFactor) package. One issue is that Bayes factors can be referenced from either the alternative hypothesis (H~1~) or the null hypothesis (H~0~). Also, as a ratio, digits after the decimal are more important below 1 than above 1.
+The `format_bf()` function can either format a vector of numeric values or extract and format Bayes factors from a `BFBayesFactor` object from the [`{BayesFactor}`](https://cran.r-project.org/package=BayesFactor) package. Bayes factors are not as standardized in how they are formatted. One issue is that Bayes factors can be referenced from either the alternative hypothesis (H~1~) or the null hypothesis (H~0~). Also, as a ratio, digits after the decimal are more important below 1 than above 1.
 
-To respond to the digits issue, the `format_bf()` function controls digits for Bayes factor less than 1 (`digits1`) separately from those greater than 1 (`digits2`). In fact, the defaults are different for these two arguments. Further Bayes factors can be very large or very small when evidence strongly favors one hypothesis over another. Therfore, the `cutoff` argument set a threshold above which (or below 1/cutoff) the returned value is truncated (e.g., BF > 1000).
+To respond to the digits issue, the `format_bf()` function controls digits for Bayes factor less than 1 (`digits1`) separately from those greater than 1 (`digits2`). In fact, the defaults are different for these two arguments. Further, Bayes factors can be very large or very small when evidence strongly favors one hypothesis over another. Therefore, the `cutoff` argument set a threshold above which (or below 1/cutoff) the returned value is truncated (e.g., BF > 1000).
 
 | Code | Output |
 |--------|------|
 | `format_bf(4321)`     |  `r format_bf(4321)`      |
 | `format_bf(4321, digits1 = 2)`     | `r format_bf(4321, digits1 = 2)`       |
+| `format_bf(4321, cutoff = 1000)`     | `r format_bf(4321, cutoff = 1000)`       |
 | `format_bf(0.04321)`     | `r format_bf(0.04321)`       |
 | `format_bf(0.04321, digits2 = 3)`     | `r format_bf(0.04321, digits2 = 3)`       |
-| `format_bf(4321, cutoff = 1000)`     | `r format_bf(4321, cutoff = 1000)`       |
-|      |        |
 | `format_bf(0.04321, cutoff = 10)`     | `r format_bf(0.04321, cutoff = 10)`       |
 
 The default label for Bayes factors is _BF_~10~. The text of the label can be changed with the `label` argument, where setting `label = ""` omits the label. Italics can be removed with `italics = FALSE`, and the subscript can be set to 01  (`subscript = "01"`) or removed (`subscript = ""`).
@@ -134,8 +133,8 @@ Let's start by creating a few different correlations.
 
 ```{r}
 mpg_disp_corr_pearson <- cor.test(mtcars$mpg, mtcars$disp, method = "pearson")
-mpg_disp_corr_spearman <- cor.test(mtcars$mpg, mtcars$disp, method = "spearman")
-mpg_disp_corr_kendall <- cor.test(mtcars$mpg, mtcars$disp, method = "kendall")
+mpg_disp_corr_spearman <- cor.test(mtcars$mpg, mtcars$disp, method = "spearman", exact = FALSE)
+mpg_disp_corr_kendall <- cor.test(mtcars$mpg, mtcars$disp, method = "kendall", exact = FALSE)
 ```
 
 For Pearson correlations, we get the correlation coefficient and the confidence intervals. Since Spearman and Kendall correlations are non-parametric, confidence intervals are not returned. Confidence intervals can be omitted from Pearson correlations by setting `ci = FALSE`.
@@ -147,7 +146,7 @@ For Pearson correlations, we get the correlation coefficient and the confidence 
 | `format_corr(mpg_disp_corr_spearman)` | `r format_corr(mpg_disp_corr_spearman)` |
 | `format_corr(mpg_disp_corr_kendall)` | `r format_corr(mpg_disp_corr_kendall)` |
 
-Format the number of digits of coefficients with `digits` and digits of p-values with `pdigits` (gets passed to `format_p()` function). Include the leading zeros for coefficients and p-values with `pzero = TRUE`. Remove italics with  `italics = FALSE`.
+Format the number of digits of coefficients with `digits` and digits of p-values with `pdigits`. Include the leading zeros for coefficients and p-values with `pzero = TRUE`. Remove italics with  `italics = FALSE`.
 
 | Code | Output |
 |---------|------|
@@ -169,9 +168,9 @@ Let's start by creating a few different t-tests
 mpg_disp_ttest_gear_carb <- t.test(mtcars$gear, mtcars$carb)
 mpg_disp_ttest_gear_carb_paired <- t.test(mtcars$gear, mtcars$carb, paired = TRUE)
 mpg_disp_ttest_gear_carb_onesample <- t.test(mtcars$gear, mu = 4)
-mpg_disp_wtest_gear_carb <- wilcox.test(mtcars$gear, mtcars$carb)
-mpg_disp_wtest_gear_carb_paired <- wilcox.test(mtcars$gear, mtcars$carb, paired = TRUE)
-mpg_disp_wtest_gear_carb_onesample <- wilcox.test(mtcars$gear, mu = 4)
+mpg_disp_wtest_gear_carb <- wilcox.test(mtcars$gear, mtcars$carb, exact = FALSE)
+mpg_disp_wtest_gear_carb_paired <- wilcox.test(mtcars$gear, mtcars$carb, paired = TRUE, exact = FALSE)
+mpg_disp_wtest_gear_carb_onesample <- wilcox.test(mtcars$gear, mu = 4, exact = FALSE)
 ```
 
 For Student's t-tests, we get the mean value or difference and the confidence intervals. Means and confidence intervals can be omitted by setting `full = FALSE`.
@@ -186,7 +185,7 @@ For Student's t-tests, we get the mean value or difference and the confidence in
 | `format_ttest(mpg_disp_wtest_gear_carb_paired)` | `r format_ttest(mpg_disp_wtest_gear_carb_paired)` |
 | `format_ttest(mpg_disp_wtest_gear_carb_onesample)` | `r format_ttest(mpg_disp_wtest_gear_carb_onesample)` |
 
-Format the number of digits of coefficients with `digits` and digits of p-values with `pdigits` (gets passed to `format_p()` function). Include the leading zeros for coefficients and p-values with `pzero = TRUE`. Remove italics with  `italics = FALSE`.
+Format the number of digits of coefficients with `digits` and digits of p-values with `pdigits`. Include the leading zeros for coefficients and p-values with `pzero = TRUE`. Remove italics with  `italics = FALSE`.
 
 | Code | Output |
 |---------|------|
@@ -194,17 +193,17 @@ Format the number of digits of coefficients with `digits` and digits of p-values
 | `format_ttest(mpg_disp_ttest_gear_carb, digits = 2, pdigits = 2)` | `r format_ttest(mpg_disp_ttest_gear_carb, digits = 2, pdigits = 2)` |
 | `format_ttest(mpg_disp_ttest_gear_carb, pzero = TRUE)` | `r format_ttest(mpg_disp_ttest_gear_carb, pzero = TRUE)` |
 | `format_ttest(mpg_disp_ttest_gear_carb, italics = FALSE)` | `r format_ttest(mpg_disp_ttest_gear_carb, italics = FALSE)` |
-| `format_ttest(mpg_disp_wtest_gear_carb)` | `r format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` |
+| `format_ttest(mpg_disp_wtest_gear_carb)` | `r format_ttest(mpg_disp_wtest_gear_carb)` |
 | `format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` | `r format_ttest(mpg_disp_wtest_gear_carb, italics = FALSE)` |
 
 ## Formatting numbers
 
-In addition to extracting the appropriate information, this package flexibly formats the numbers that are extracted. The `format_num()` function control general formatting of numbers of digits with `digits` and the presence of the leading zero with `pzero`.
+In addition to formatting specific statistics, this package can format numbers more generally. The `format_num()` function controls general formatting of numbers of digits with `digits` and the presence of the leading zero with `pzero`.
 
 | Code | Output |
 |---------|------|
 | `format_num(0.1234)` | `r format_num(0.1234)` |
-| `format_num(0.1234, digits = 1)` | `r format_num(0.1234, digits = 1)` |
+| `format_num(0.1234, digits = 2)` | `r format_num(0.1234, digits = 2)` |
 | `format_num(0.1234, pzero = FALSE)` | `r format_num(0.1234, pzero = FALSE)` |
 
 For large or small values, using scientific notation may be a more useful way to format the numbers. The `format_scientific()` function converts to scientific notation, again offering control of the number of `digits` as well as whether output `type` is Markdown or LaTeX.
