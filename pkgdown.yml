@@ -1,9 +1,9 @@
-pandoc: 2.19.2
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   formatstats: formatstats.html
-last_built: 2024-02-25T22:36Z
+last_built: 2024-03-11T16:02Z
 urls:
   reference: https://jeffreyrstevens.github.io/formatstats/reference
   article: https://jeffreyrstevens.github.io/formatstats/articles
