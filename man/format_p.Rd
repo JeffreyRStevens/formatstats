@@ -36,6 +36,11 @@ Markdown or LaTeX. If p-value is below \code{digits} cutoff, \code{p < cutoff} i
 used.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
+
 \code{format_p()} inputs numeric vectors of p-values. Cutoffs can be set that
 format the values as less than the cutoffs (e.g., p < 0.001). The default
 output is APA formatted, but numbers of digits, cutoffs, leading zeros, and
@@ -54,3 +59,4 @@ format_p(0.001, pzero = TRUE)
 # Return only Bayes factor value (no label)
 format_p(0.001, label = "")
 }
+\keyword{internal}

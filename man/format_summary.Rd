@@ -154,6 +154,11 @@ A character string of mean and error formatted in Markdown or LaTeX.
 To return only the mean (no error), set \code{display = "none"}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
+
 \code{format_summary()} is a general function that allows you to either
 automatically calculate mean/median and a measure of error from a data vector
 or specify already calculated a mean/median and either an error interval or
@@ -183,3 +188,4 @@ format_meanci(mtcars$mpg, units = "cm", cilevel = 0.9)
 # Print three-digit mean with subscript in LaTeX
 format_summary(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
 }
+\keyword{internal}

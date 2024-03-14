@@ -44,6 +44,11 @@ intervals or just t-statistic and p-value}
 A character string of statistical information formatted in Markdown or LaTeX.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
+
 With \code{format_ttest()} you can format t-tests generated from \code{t.test()} and
 \code{wilcox.test()} output. The default output is APA formatted, but numbers of
 digits, leading zeros, the presence of means and confidence intervals,
@@ -61,9 +66,11 @@ format_ttest(mtcars_tt, pdigits = 2)
 # Add leading zero to p-value and don't print confidence intervals
 format_ttest(mtcars_tt, pzero = TRUE, full = FALSE)
 }
-\seealso{
-Other functions for printing statistical objects: 
-\code{\link{format_bf}()},
-\code{\link{format_corr}()}
-}
-\concept{functions for printing statistical objects}
+\keyword{#}
+\keyword{@family}
+\keyword{for}
+\keyword{functions}
+\keyword{internal}
+\keyword{objects}
+\keyword{printing}
+\keyword{statistical}

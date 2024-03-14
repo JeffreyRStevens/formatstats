@@ -37,6 +37,11 @@ p-values}
 A character string of statistical information formatted in Markdown or LaTeX.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
+
 With \code{format_corr()} you can format correlation statistics generated from
 \code{cor.test()} output. This detects whether the object is from a Pearson,
 Kendall, or Spearman correlation and reports the appropriate correlation
@@ -56,9 +61,11 @@ format_corr(mtcars_corr, pdigits = 2)
 # Add leading zero to p-value and don't print confidence intervals
 format_corr(mtcars_corr, pzero = TRUE, ci = FALSE)
 }
-\seealso{
-Other functions for printing statistical objects: 
-\code{\link{format_bf}()},
-\code{\link{format_ttest}()}
-}
-\concept{functions for printing statistical objects}
+\keyword{#}
+\keyword{@family}
+\keyword{for}
+\keyword{functions}
+\keyword{internal}
+\keyword{objects}
+\keyword{printing}
+\keyword{statistical}

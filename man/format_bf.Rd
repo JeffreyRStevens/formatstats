@@ -42,6 +42,11 @@ Bayes factor formatted in Markdown or LaTeX. If Bayes factor is above or
 below \code{cutoff}, \verb{_BF_~10~ > <cutoff>} or \verb{_BF_~10~ < 1 / <cutoff>} is used.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
+
 \code{format_bf()} can input either a
 \href{https://cran.r-project.org/package=BayesFactor}{{BayesFactor}}
 object or a vector of Bayes factor values. By default, this function rounds
@@ -72,9 +77,11 @@ format_bf(0.001, cutoff = 100)
 # Return only Bayes factor value (no label)
 format_bf(12.4444, label = "")
 }
-\seealso{
-Other functions for printing statistical objects: 
-\code{\link{format_corr}()},
-\code{\link{format_ttest}()}
-}
-\concept{functions for printing statistical objects}
+\keyword{#}
+\keyword{@family}
+\keyword{for}
+\keyword{functions}
+\keyword{internal}
+\keyword{objects}
+\keyword{printing}
+\keyword{statistical}
