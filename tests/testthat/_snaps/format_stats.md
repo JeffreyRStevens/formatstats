@@ -15,6 +15,12 @@
       Warning:
       `format_p()` was deprecated in formatstats 0.0.0.9000.
       i Please use `cocoon::format_p()` instead.
+      Warning:
+      `format_num()` was deprecated in formatstats 0.0.0.9000.
+      i Please use `cocoon::format_num()` instead.
+      Warning:
+      `format_num()` was deprecated in formatstats 0.0.0.9000.
+      i Please use `cocoon::format_num()` instead.
     Output
       [1] "_r_ = 1.00, 95% CI [1.00, 1.00], _p_ < .001"
 
@@ -96,10 +102,10 @@
 ---
 
     Code
-      format_meanerror(x = 1:10)
+      format_summary(x = 1:10)
     Condition
       Warning:
-      `format_meanerror()` was deprecated in formatstats 0.0.0.9000.
+      `format_summary()` was deprecated in formatstats 0.0.0.9000.
       i Please use `cocoon::format_summary()` instead.
       Warning:
       `format_num()` was deprecated in formatstats 0.0.0.9000.
