@@ -70,7 +70,7 @@ format_corr <- function(x,
     cis <- NULL
     ci <- FALSE
   }
-  pvalue <- format_p(x$p.value, pdigits = pdigits, pzero = pzero,
+  pvalue <- format_p(x$p.value, digits = pdigits, pzero = pzero,
                      italics = italics, type = type)
 
   # Build label
@@ -177,14 +177,14 @@ format_ttest <- function(x,
     statlab <- attr(x$statistic, "name")
   }
   tstat <- format_num(x$statistic, digits = digits)
-  pvalue <- format_p(x$p.value, pdigits = pdigits, pzero = pzero,
+  pvalue <- format_p(x$p.value, digits = pdigits, pzero = pzero,
                      italics = italics, type = type)
 
   # Build label
   t_lab <- dplyr::case_when(!italics ~ paste0(statlab),
                             identical(type, "md") ~ paste0("_", statlab, "_"),
                             identical(type, "latex") ~ paste0("$", statlab, "$")
-                            )
+  )
   tlab <- dplyr::case_when(identical(dfs, "par") ~ paste0(t_lab, "(", df, ")"),
                            identical(dfs, "sub") & identical(type, "md") ~ paste0(t_lab, "~", df, "~"),
                            identical(dfs, "sub") & identical(type, "latex") ~ paste0(t_lab, "$_{", df, "}$"),
@@ -194,7 +194,7 @@ format_ttest <- function(x,
   if (full) {
     mean_lab <- dplyr::case_when(identical(mean, "abbr") ~ paste0(format_chr("M", italics = italics, type = type), " = "),
                                  identical(mean, "word") ~ paste0(format_chr("Mean", italics = italics, type = type), " = ")
-                                 )
+    )
     paste0(mean_lab, mean_val, ", 95% CI [", cis[1], ", ", cis[2], "], ", tlab, " = ", tstat, ", ", pvalue)
   } else {
     paste0(tlab, " = ", tstat, ", ", pvalue)
@@ -206,28 +206,33 @@ format_ttest <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
-#' `format_bf()` can input either a [BayesFactor] object or a vectors of Bayes
-#' factor values. By default, this function rounds Bayes factors greater than 1
-#' to one decimal place and Bayes factors less than 1 to two decimal places.
-#' Values greater than 1000 or less than 1/1000 are formatted using scientific
-#' notation. Cutoffs can be set that format the values as greater than or less
-#' than the cutoffs (e.g., BF > 1000 or BF < 0.001). Numbers of digits, cutoffs,
-#' italics, and label subscripts are all customizable.
+#' `format_bf()` can input either a
+#' [{BayesFactor}](https://cran.r-project.org/package=BayesFactor)
+#' object or a vector of Bayes factor values. By default, this function rounds
+#' Bayes factors greater than 1 to one decimal place and Bayes factors less
+#' than 1 to two decimal places. Values greater than 1000 or less than 1/1000
+#' are formatted using scientific notation. Cutoffs can be set that format the
+#' values as greater than or less than the cutoffs (e.g., BF > 1000 or
+#' BF < 0.001). Numbers of digits, cutoffs, italics, and label subscripts are
+#' all customizable.
 #'
 #' @param x BayesFactor object or vector of numeric Bayes factor values
 #' @param digits1 Number of digits after the decimal for Bayes factors > 1
 #' @param digits2 Number of digits after the decimal for Bayes factors < 1
 #' @param cutoff Cutoff for using `_BF_~10~ > <cutoff>` or
 #' `_BF_~10~ < 1 / <cutoff>` (value must be > 1)
-#' @param italics Logical for whether _BF_ label should be italicized
-#' @param subscript Subscript to include with _BF_ label ("10", "01", or "" for
-#' no subscript)
-#' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
+#' @param label Character string for label before Bayes factor. Default is BF.
+#' Set `label = ""` to return just the formatted Bayes factor value with no
+#' label or operator (`=`, `<`, `>`)
+#' @param italics Logical for whether label should be italicized (_BF_ or BF)
+#' @param subscript Subscript to include with _BF_ label (`"10"`, `"01"`, or
+#' `""` for no subscript)
+#' @param type Type of formatting (`"md"` = markdown, `"latex"` = LaTeX)
 #'
 #' @return
-#' A character string that includes _BF_~10~ and then the Bayes factor formatted
-#' in Markdown or LaTeX. If Bayes factor is above or below `cutoff`,
-#' `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
+#' A character string that includes label (by default _BF_~10~) and then the
+#' Bayes factor formatted in Markdown or LaTeX. If Bayes factor is above or
+#' below `cutoff`, `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
 #' @export
 #'
 #' @keywords internal # @family functions for printing statistical objects
@@ -249,10 +254,13 @@ format_ttest <- function(x,
 #' format_bf(0.111, digits2 = 3)
 #' # Control cutoff for output
 #' format_bf(0.001, cutoff = 100)
+#' # Return only Bayes factor value (no label)
+#' format_bf(12.4444, label = "")
 format_bf <- function(x,
                       digits1 = 1,
                       digits2 = 2,
                       cutoff = NULL,
+                      label = "BF",
                       italics = TRUE,
                       subscript = "10",
                       type = "md") {
@@ -275,26 +283,38 @@ format_bf <- function(x,
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Build label
-  bf_lab <- paste0(format_chr("BF", italics = italics, type = type), format_sub(subscript, type = type))
+  if (label != "") {
+    bf_lab <- paste0(format_chr(label, italics = italics, type = type), format_sub(subscript, type = type))
+    operator <- " = "
+  } else {
+    bf_lab <- ""
+    operator <- ""
+  }
 
   # Format Bayes factor
   if (is.null(cutoff)) {
-    bf <- dplyr::case_when(bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
-                           bf <= 0.001 ~ format_scientific(bf, digits = digits1, type = type),
-                           bf > 1 ~ format_num(bf, digits = digits1),
-                           bf < 1 ~ format_num(bf, digits = digits2))
-    paste0(bf_lab, " = ", bf)
+    bf_value <- dplyr::case_when(
+      bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
+      bf <= 1 / 10 ^ digits2 ~ format_scientific(bf, digits = digits1, type = type),
+      bf >= 1 ~ format_num(bf, digits = digits1),
+      bf < 1 ~ format_num(bf, digits = digits2)
+    )
   } else {
-    if (bf > cutoff) {
-      paste0(bf_lab, " > ", cutoff)
-    } else if (bf <  1 / cutoff) {
-      paste0(bf_lab, " < ", (1 / cutoff))
-    } else {
-      bf <- dplyr::case_when(bf > 1 ~ format_num(bf, digits = digits1),
-                             .default = format_num(bf, digits = digits2))
-      paste0(bf_lab, " = ", bf)
-    }
+    bf_value <- dplyr::case_when(
+      bf >= cutoff ~ as.character(cutoff),
+      bf <= 1 / cutoff ~ as.character(1 / cutoff),
+      bf <= 1 / 10 ^ digits2 ~ as.character(1 / 10 ^ digits2),
+      bf >= 1 & bf <= cutoff ~ format_num(bf, digits = digits1),
+      bf < 1 & bf >= 1 / cutoff ~ format_num(bf, digits = digits2)
+    )
+    operator <- dplyr::case_when(
+      bf > cutoff ~ " > ",
+      bf < 1 / cutoff ~ " < ",
+      bf < 1 / 1 / 10 ^ digits2 ~ " < ",
+      .default = operator
+    )
   }
+  paste0(bf_lab, operator, bf_value)
 }
 
 
@@ -308,16 +328,19 @@ format_bf <- function(x,
 #' italics are all customizable.
 #'
 #' @param x Number representing p-value
-#' @param pdigits Number of digits after the decimal for p-values, ranging
+#' @param digits Number of digits after the decimal for p-values, ranging
 #' between 1-5 (also controls cutoff for small p-values)
 #' @param pzero Logical indicator of whether to include leading zero for
 #' p-values
-#' @param italics Logical for whether _p_ label should be italicized
+#' @param label Character string for label before p value. Default is p.
+#' Set `label = ""` to return just the formatted p value with no
+#' label or operator (`=`, `<`, `>`)
+#' @param italics Logical for whether label should be italicized (_p_)
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
 #'
 #' @return
 #' A character string that includes _p_ and then the p-value formatted in
-#' Markdown or LaTeX. If p-value is below `pdigits` cutoff, `p < cutoff` is
+#' Markdown or LaTeX. If p-value is below `digits` cutoff, `p < cutoff` is
 #' used.
 #' @export
 #'
@@ -325,66 +348,71 @@ format_bf <- function(x,
 #' @examples
 #' format_p(0.001)
 #' # Round digits for p-values greater than cutoff
-#' format_p(0.111, pdigits = 2)
+#' format_p(0.111, digits = 2)
 #' # Default cutoff is p < 0.001
 #' format_p(0.0001)
-#' # Set cutoff with pdigits
-#' format_p(0.0001, pdigits = 2)
+#' # Set cutoff with digits
+#' format_p(0.0001, digits = 2)
 #' # Include leading zero
 #' format_p(0.001, pzero = TRUE)
+#' # Return only Bayes factor value (no label)
+#' format_p(0.001, label = "")
 format_p <- function(x,
-                     pdigits = 3,
+                     digits = 3,
                      pzero = FALSE,
+                     label = "p",
                      italics = TRUE,
                      type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_p()", "cocoon::format_p()")
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits > 0)
-  stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = pdigits < 6)
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = is.numeric(digits))
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = digits > 0)
+  stopifnot("Argument `digits` must be a numeric between 1 and 5." = digits < 6)
   stopifnot("Argument `pzero` must be TRUE or FALSE." = is.logical(pzero))
   stopifnot("Argument `italics` must be TRUE or FALSE." = is.logical(italics))
   stopifnot("Argument `type` must be 'md' or 'latex'." = type %in% c("md", "latex"))
 
   # Build label
-  ## Format p
-  p_lab <- dplyr::case_when(identical(type, "md") & italics ~ paste0("_p_"),
-                            identical(type, "latex") & italics ~ paste0("$p$"),
-                            identical(type, "md") & !italics ~ paste0("p"),
-                            identical(type, "latex") & !italics ~ paste0("p"))
-  ## Determine if using = or <
-  cutoff <- as.numeric(paste0("1e-", pdigits))
-  if (x < cutoff) {
-    minp <- dplyr::case_when(pzero ~ as.character(as.numeric(paste0("1e-", pdigits))),
-                             !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", pdigits)))))
-    paste0(p_lab, " < ", minp)
+  if (label != "") {
+    p_lab <- paste0(format_chr(label, italics = italics, type = type))
+    operator <- " = "
   } else {
-    pvalue <- dplyr::case_when(pzero ~ format_num(x, digits = pdigits),
-                               !pzero ~ sub("0\\.", "\\.", format_num(x, digits = pdigits)))
-    paste0(p_lab, " = ", pvalue)
+    p_lab <- ""
+    operator <- ""
   }
+  # Build label
+  ## Determine if using = or <
+  cutoff <- as.numeric(paste0("1e-", digits))
+  operator <- ifelse(label != "" & x < cutoff, " < ", operator)
+  ## Format pvalue
+  pvalue <- dplyr::case_when(
+    x < cutoff & pzero ~ as.character(as.numeric(paste0("1e-", digits))),
+    x < cutoff & !pzero ~ sub("0\\.", "\\.", as.character(as.numeric(paste0("1e-", digits)))),
+    x >= cutoff & pzero ~ format_num(x, digits = digits),
+    x >= cutoff & !pzero ~ sub("0\\.", "\\.", format_num(x, digits = digits))
+  )
+  paste0(p_lab, operator, pvalue)
 }
 
 
-#' Calculate and format mean and error
+#' Calculate and format summary statistics of central tendency and error
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
-#' `format_meanerror()` is a general function that allows you to either
+#' `format_summary()` is a general function that allows you to either
 #' automatically calculate mean/median and a measure of error from a data vector
 #' or specify already calculated a mean/median and either an error interval or
 #' error limits. Error measures include confidence intervals, standard
 #' deviation, and standard error of the mean. Each of those has a specific
 #' function that formats means and those error measures using APA (7th edition)
 #' style. So `format_meanci()`, `format_meansd()`, `format_meanse()`, and
-#' `format_medianiqr()` are wrappers around `format_meanerror()` for specific
+#' `format_medianiqr()` are wrappers around `format_summary()` for specific
 #' error measures with a default style. To just format the mean or median with
-#' no error, use `format_mean()` or `format_median()`, other wrappers around
-#' `format_meanerror()` that drop the error measure.
+#' no error, use `format_mean()` or `format_median()`. All measures ignore NAs.
 #'
 #' @param x Numeric vector of data to calculate mean and error
-#' @param summary Character vector specifying summary measure of central
+#' @param tendency Character vector specifying measure of central
 #' tendency ("mean" = mean, "median" = median)
 #' @param error Character vector specifying error type ("ci" = confidence
 #' interval, "se" = standard error of the mean, "sd" = standard deviation, "iqr"
@@ -392,7 +420,7 @@ format_p <- function(x,
 #' @param values Numeric vector of mean and interval or mean and lower and upper
 #' limits
 #' @param digits Number of digits after the decimal for means and error
-#' @param meanlabel Formatting for mean label ("abbr" = M, "word" = Mean,
+#' @param tendlabel Formatting for tendency label ("abbr" = M, "word" = Mean,
 #' "none" = no label)
 #' @param italics Logical for whether mean label should be italicized
 #' @param subscript Character string to include as subscript with mean label
@@ -427,13 +455,13 @@ format_p <- function(x,
 #' # Print mean and 90% confidence limits with units
 #' format_meanci(mtcars$mpg, units = "cm", cilevel = 0.9)
 #' # Print three-digit mean with subscript in LaTeX
-#' format_meanerror(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
-format_meanerror <- function(x = NULL,
-                             summary = "mean",
+#' format_summary(mtcars$mpg, digits = 3, subscript = "control", display = "none", type = "latex")
+format_summary <- function(x = NULL,
+                             tendency = "mean",
                              error = "ci",
                              values = NULL,
                              digits = 1,
-                             meanlabel = "abbr",
+                             tendlabel = "abbr",
                              italics = TRUE,
                              subscript = NULL,
                              units = NULL,
@@ -441,14 +469,16 @@ format_meanerror <- function(x = NULL,
                              cilevel = 0.95,
                              errorlabel = TRUE,
                              type = "md") {
-  lifecycle::deprecate_warn("0.0.0.9000", "format_meanerror()", "cocoon::format_summary()")
+  lifecycle::deprecate_warn("0.0.0.9000", "format_summary()", "cocoon::format_summary()")
   # Check arguments
   if (!is.null(x)) {
     stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
-    stopifnot('Specify `summary` as "mean" or "median".' = summary %in% c("mean", "median"))
+    stopifnot('Specify `tendency` as "mean" or "median".' = tendency %in% c("mean", "median"))
     stopifnot('Specify `error` as "ci", "sd", "se", or "iqr".' = error %in% c("ci", "sd", "se", "iqr"))
-    xsummary <- dplyr::case_when(identical(summary, "mean") ~ mean(x, na.rm = TRUE),
-                                 identical(summary, "median") ~ median(x, na.rm = TRUE))
+    xtendency <- dplyr::case_when(
+      identical(tendency, "mean") ~ mean(x, na.rm = TRUE),
+      identical(tendency, "median") ~ median(x, na.rm = TRUE)
+    )
     xn <- sum(!is.na(x))
     stopifnot("Less than two non-missing values in vector, so no confidence interval can be computed." = xn > 1)
     xlimit <- 1- (1 - cilevel) / 2
@@ -456,94 +486,102 @@ format_meanerror <- function(x = NULL,
     xse <- xsd / sqrt(xn)
     xci <- stats::qt(xlimit, df = (xn - 1)) * xse
     xiqr <- stats::IQR(x)
-    xlower <- dplyr::case_when(identical(error, "ci") ~ xsummary - xci,
-                               identical(error, "sd") ~ xsummary - xsd,
-                               identical(error, "se") ~ xsummary - xse,
-                               identical(error, "iqr") ~ xsummary - xiqr)
-    xupper <-  dplyr::case_when(identical(error, "ci") ~ xsummary + xci,
-                                identical(error, "sd") ~ xsummary + xsd,
-                                identical(error, "se") ~ xsummary + xse,
-                                identical(error, "iqr") ~ xsummary + xiqr)
-    xinterval <- xsummary - xlower
+    xlower <- dplyr::case_when(
+      identical(error, "ci") ~ xtendency - xci,
+      identical(error, "sd") ~ xtendency - xsd,
+      identical(error, "se") ~ xtendency - xse,
+      identical(error, "iqr") ~ xtendency - xiqr
+    )
+    xupper <-  dplyr::case_when(
+      identical(error, "ci") ~ xtendency + xci,
+      identical(error, "sd") ~ xtendency + xsd,
+      identical(error, "se") ~ xtendency + xse,
+      identical(error, "iqr") ~ xtendency + xiqr
+    )
+    xinterval <- xtendency - xlower
   } else if (!is.null(values)) {
     stopifnot("Argument `values` must be a numeric vector." = is.numeric(values))
     stopifnot("Argument `values` must be a vector with two or three elements." = length(values) %in% c(2, 3))
     if (length(values) == 2) {
-      xsummary <- values[1]
+      xtendency <- values[1]
       xinterval <- values[2]
-      xlower <- xsummary - xinterval
-      xupper <- xsummary + xinterval
+      xlower <- xtendency - xinterval
+      xupper <- xtendency + xinterval
     } else {
       stopifnot("Argument `values` must include the mean followed by the lower CI limit then the upper CI limit." = values[1] >= values[2] & values[1] <= values[3])
-      xsummary <- values[1]
+      xtendency <- values[1]
       xlower <- values[2]
       xupper <- values[3]
-      xinterval <- xsummary - xlower
+      xinterval <- xtendency - xlower
     }
   } else {
     stop("You must include either the `x` or `values` argument.")
   }
-  stopifnot('Specify `meanlabel` as "abbr", "word", or "none".' = meanlabel %in% c("abbr", "word", "none"))
+  stopifnot('Specify `tendlabel` as "abbr", "word", or "none".' = tendlabel %in% c("abbr", "word", "none"))
   stopifnot("The `units` argument must be a character vector or NULL" = is.character(units) | is.null(units))
   stopifnot('Specify `display` as "limits", "pm", "par", or "none".' = display %in% c("limits", "pm", "par", "none"))
 
   # Build mean
   # subname <- ifelse(!is.null(subscript), subscript, "")
-  unit <- dplyr::case_when(!is.null(units) ~ paste0(" ", units),
-                           .default = "")
-  mean_lab <- dplyr::case_when(identical(meanlabel, "none") ~ "",
-                               identical(summary, "mean") & identical(meanlabel, "abbr") ~
-                                 paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "mean") & identical(meanlabel, "word") ~
-                                 paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "median") & identical(meanlabel, "abbr") ~
-                                 paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
-                               identical(summary, "median") & identical(meanlabel, "word") ~
-                                 paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
-                               )
-  full_mean <- paste0(mean_lab, format_num(xsummary, digits = digits), unit)
+  unit <- dplyr::case_when(
+    !is.null(units) ~ paste0(" ", units),
+    .default = ""
+  )
+  mean_lab <- dplyr::case_when(
+    identical(tendlabel, "none") ~ "",
+    identical(tendency, "mean") & identical(tendlabel, "abbr") ~
+      paste0(format_chr("M", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(tendency, "mean") & identical(tendlabel, "word") ~
+      paste0(format_chr("Mean", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(tendency, "median") & identical(tendlabel, "abbr") ~
+      paste0(format_chr("Mdn", italics = italics, type = type), format_sub(subscript, type = type), " = "),
+    identical(tendency, "median") & identical(tendlabel, "word") ~
+      paste0(format_chr("Median", italics = italics, type = type), format_sub(subscript, type = type), " = ")
+  )
+  full_mean <- paste0(mean_lab, format_num(xtendency, digits = digits), unit)
 
   # Add error
-  error_lab <- dplyr::case_when(!errorlabel ~ "",
-                                identical(error, "ci") ~ paste0(cilevel * 100, "% CI"),
-                                identical(error, "sd") ~ paste0(format_chr("SD", italics = italics, type = type)),
-                                identical(error, "se") ~ paste0(format_chr("SE", italics = italics, type = type)),
-                                identical(error, "iqr") ~ paste0(format_chr("IQR", italics = italics, type = type)))
-  full_error <- dplyr::case_when(identical(display, "limits") ~ paste0(", ", error_lab, " [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
-                                 identical(display, "pm") ~ paste0(" \u00b1 ", format_num(xinterval, digits = digits)),
-                                 identical(display, "par") ~ paste0(" ", "(", error_lab, " = ", format_num(xinterval, digits = digits), ")"),
-                                 .default = "")
-
+  error_lab <- dplyr::case_when(
+    !errorlabel ~ "",
+    identical(error, "ci") ~ paste0(cilevel * 100, "% CI"),
+    identical(error, "sd") ~ paste0(format_chr("SD", italics = italics, type = type)),
+    identical(error, "se") ~ paste0(format_chr("SE", italics = italics, type = type)),
+    identical(error, "iqr") ~ paste0(format_chr("IQR", italics = italics, type = type))
+  )
+  full_error <- dplyr::case_when(
+    identical(display, "limits") ~ paste0(", ", error_lab, " [", format_num(xlower, digits = digits), ", ", format_num(xupper, digits = digits), "]"),
+    identical(display, "pm") ~ paste0(" \u00b1 ", format_num(xinterval, digits = digits)),
+    identical(display, "par") ~ paste0(" ", "(", error_lab, " = ", format_num(xinterval, digits = digits), ")"),
+    .default = ""
+    )
   paste0(full_mean, full_error)
-
 }
 
-#' @rdname format_meanerror
+#' @rdname format_mean
 #' @keywords internal
 #' @export
 format_mean <- function(x = NULL,
-                        summary = "mean",
+                        tendency = "mean",
                         values = NULL,
-                        digits = 2,
-                        meanlabel = "abbr",
+                        digits = 1,
+                        tendlabel = "abbr",
                         italics = TRUE,
                         subscript = NULL,
                         units = NULL,
                         display = "none",
                         type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_mean()", "cocoon::format_mean()")
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_summary(x = x, tendency = tendency, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
-#' @rdname format_meanerror
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_meanci <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "ci",
                           values = NULL,
-                          digits = 2,
-                          meanlabel = "abbr",
+                          digits = 1,
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
@@ -552,18 +590,17 @@ format_meanci <- function(x = NULL,
                           errorlabel = TRUE,
                           type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_meanci()", "cocoon::format_meanci()")
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_meanse <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "se",
                           values = NULL,
-                          digits = 2,
-                          meanlabel = "abbr",
+                          digits = 1,
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
@@ -571,18 +608,17 @@ format_meanse <- function(x = NULL,
                           errorlabel = TRUE,
                           type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_meanse()", "cocoon::format_meanse()")
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_meansd <- function(x = NULL,
-                          summary = "mean",
+                          tendency = "mean",
                           error = "sd",
                           values = NULL,
-                          digits = 2,
-                          meanlabel = "abbr",
+                          digits = 1,
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
@@ -590,35 +626,33 @@ format_meansd <- function(x = NULL,
                           errorlabel = TRUE,
                           type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_meansd()", "cocoon::format_meansd()")
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
-#' @rdname format_meanerror
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_median <- function(x = NULL,
-                          summary = "median",
+                          tendency = "median",
                           values = NULL,
-                          digits = 2,
-                          meanlabel = "abbr",
+                          digits = 1,
+                          tendlabel = "abbr",
                           italics = TRUE,
                           subscript = NULL,
                           units = NULL,
                           display = "none",
                           type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_median()", "cocoon::format_median()")
-  format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
+  format_summary(x = x, tendency = tendency, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
-#' @rdname format_meanerror
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_medianiqr <- function(x = NULL,
-                             summary = "median",
+                             tendency = "median",
                              error = "iqr",
                              values = NULL,
-                             digits = 2,
-                             meanlabel = "abbr",
+                             digits = 1,
+                             tendlabel = "abbr",
                              italics = TRUE,
                              subscript = NULL,
                              units = NULL,
@@ -626,6 +660,6 @@ format_medianiqr <- function(x = NULL,
                              errorlabel = TRUE,
                              type = "md") {
   lifecycle::deprecate_warn("0.0.0.9000", "format_medianiqr()", "cocoon::format_medianiqr()")
-  format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
+  format_summary(x = x, tendency = tendency, error = error, values = values, digits = digits, tendlabel = tendlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
