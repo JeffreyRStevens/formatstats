@@ -6,10 +6,13 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+deprecated](https://img.shields.io/badge/lifecycle-deprecated-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#deprecated)
 [![Codecov test
 coverage](https://codecov.io/gh/JeffreyRStevens/formatstats/branch/main/graph/badge.svg)](https://app.codecov.io/gh/JeffreyRStevens/formatstats?branch=main)
 <!-- badges: end -->
+
+> [!WARNING]
+> The `{formatstats}` package is deprecated and superceded by the [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package (<https://github.com/JeffreyRStevens/cocoon>). Please use `{cocoon}` instead.
 
 The goal of `{formatstats}` is to provide functions that flexibly format
 statistical output in a way that can be inserted into R Markdown or

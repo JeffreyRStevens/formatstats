@@ -1,5 +1,8 @@
 #' Format numbers
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @param x Number
 #' @param digits Number of digits after the decimal
 #' @param pzero Logical indicator of whether to include leading zero numbers
@@ -10,12 +13,14 @@
 #' after the decimal.
 #' @export
 #'
+#' @keywords internal
 #' @examples
 #' format_num(pi, digits = 2)
 #' format_num(pi, digits = 4)
 format_num <- function(x,
                        digits = 1,
                        pzero = TRUE) {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_num()", "cocoon::format_num()")
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
@@ -31,6 +36,9 @@ format_num <- function(x,
 
 #' Format numbers in scientific notation
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
 #' @param x Number
 #' @param digits Number of digits after the decimal
 #' @param type Type of formatting ("md" = markdown, "latex" = LaTeX)
@@ -40,6 +48,7 @@ format_num <- function(x,
 #' or LaTeX.
 #' @export
 #'
+#' @keywords internal
 #' @examples
 #' format_scientific(1111)
 #' # Control number of digits after decimal with digits
@@ -47,6 +56,7 @@ format_num <- function(x,
 format_scientific <- function(x,
                               digits = 1,
                               type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_scientific()", "cocoon::format_scientific()")
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))

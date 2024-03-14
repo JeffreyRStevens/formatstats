@@ -4,19 +4,3 @@ template:
   bootswatch: superhero
   theme: nord
 
-reference:
-- title: Format numbers
-  contents:
-  - format_num
-  - format_scientific
-- title: Format statistics
-  contents:
-  - format_summary
-  - format_p
-  - format_bf
-  - format_corr
-  - format_ttest
-
-authors:
-  Jeffrey R. Stevens:
-    href: https://jeffreyrstevens.github.io/
