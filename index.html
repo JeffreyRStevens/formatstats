@@ -71,6 +71,9 @@
 </h1></div>
 <!-- badges: start -->
 
+<blockquote>
+<p>[!WARNING] The <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> package is deprecated and superceded by the <a href="https://github.com/JeffreyRStevens/cocoon" class="external-link"><code>{cocoon}</code></a> package (<a href="https://github.com/JeffreyRStevens/cocoon" class="external-link uri">https://github.com/JeffreyRStevens/cocoon</a>). Please use <code>{cocoon}</code> instead.</p>
+</blockquote>
 <p>The goal of <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> is to provide functions that flexibly format statistical output in a way that can be inserted into R Markdown or Quarto documents. This is analogous to the <a href="https://frederikaust.com/papaja_man/reporting.html#statistical-models-and-tests" class="external-link"><code>apa_print()</code></a> functions in the <a href="https://github.com/crsh/papaja" class="external-link"><code>{papaja}</code></a> package, but functions in <a href="https://github.com/JeffreyRStevens/formatstats" class="external-link">formatstats</a> can print Markdown or LaTeX syntax. If your output document is a PDF, this doesn’t matter. But if your output document is a Word document (as required by many journal publishers), Markdown syntax generates editable output instead of an image of output. The default style for statistical output follows <a href="https://apastyle.apa.org/" class="external-link">American Psychological Association style</a>, but many defaults can be over-ridden to flexibly format output.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -184,15 +187,14 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>
-<a href="https://jeffreyrstevens.github.io/" class="external-link">Jeffrey R. Stevens</a> <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-2375-1360" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Jeffrey R. Stevens <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0003-2375-1360" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="https://img.shields.io/badge/lifecycle-deprecated-orange.svg" alt="Lifecycle: deprecated"></a></li>
 <li><a href="https://app.codecov.io/gh/JeffreyRStevens/formatstats?branch=main" class="external-link"><img src="https://codecov.io/gh/JeffreyRStevens/formatstats/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
@@ -203,7 +205,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://jeffreyrstevens.github.io/" class="external-link">Jeffrey R. Stevens</a>.</p>
+<p>Developed by Jeffrey R. Stevens.</p>
 </div>
 
 <div class="pkgdown-footer-right">

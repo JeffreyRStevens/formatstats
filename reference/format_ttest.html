@@ -135,6 +135,8 @@ intervals or just t-statistic and p-value</p></dd>
 <span class="r-in"><span><span class="va">mtcars_tt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/t.test.html" class="external-link">t.test</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">mtcars</span><span class="op">$</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">mtcars</span><span class="op">$</span><span class="va">vs</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Print statistics</span></span></span>
 <span class="r-in"><span><span class="fu">format_ttest</span><span class="op">(</span><span class="va">mtcars_tt</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`format_ttest()` was deprecated in formatstats 0.0.0.9000.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `cocoon::format_ttest()` instead.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "_M_ = -7.9, 95% CI [-11.5, -4.4], _t_(22.7) = -4.7, _p_ &lt; .001"</span>
 <span class="r-in"><span><span class="co"># Change digits</span></span></span>
 <span class="r-in"><span><span class="fu">format_ttest</span><span class="op">(</span><span class="va">mtcars_tt</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
@@ -152,7 +154,7 @@ intervals or just t-statistic and p-value</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by <a href="https://jeffreyrstevens.github.io/" class="external-link">Jeffrey R. Stevens</a>.</p>
+  <p></p><p>Developed by Jeffrey R. Stevens.</p>
 </div>
 
 <div class="pkgdown-footer-right">

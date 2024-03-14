@@ -144,6 +144,18 @@ below <code>cutoff</code>, <code>_BF_~10~ &gt; &lt;cutoff&gt;</code> or <code>_B
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Format Bayes factors &gt; 1</span></span></span>
 <span class="r-in"><span><span class="fu">format_bf</span><span class="op">(</span><span class="fl">12.4444</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`format_bf()` was deprecated in formatstats 0.0.0.9000.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `cocoon::format_bf()` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`format_scientific()` was deprecated in formatstats 0.0.0.9000.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `cocoon::format_scientific()` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">formatstats</span> package.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue at</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/JeffreyRStevens/formatstats/issues&gt;</span>.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`format_num()` was deprecated in formatstats 0.0.0.9000.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use `cocoon::format_num()` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">formatstats</span> package.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue at</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span>   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/JeffreyRStevens/formatstats/issues&gt;</span>.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "_BF_~10~ = 12.4"</span>
 <span class="r-in"><span><span class="co"># Bayes factors &gt; 1000 will use scientific notation</span></span></span>
 <span class="r-in"><span><span class="fu">format_bf</span><span class="op">(</span><span class="fl">1244.44</span><span class="op">)</span></span></span>
@@ -176,7 +188,7 @@ below <code>cutoff</code>, <code>_BF_~10~ &gt; &lt;cutoff&gt;</code> or <code>_B
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by <a href="https://jeffreyrstevens.github.io/" class="external-link">Jeffrey R. Stevens</a>.</p>
+  <p></p><p>Developed by Jeffrey R. Stevens.</p>
 </div>
 
 <div class="pkgdown-footer-right">
