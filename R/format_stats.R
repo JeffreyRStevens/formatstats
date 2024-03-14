@@ -3,6 +3,10 @@
 #' @encoding UTF-8
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' With `format_corr()` you can format correlation statistics generated from
 #' `cor.test()` output. This detects whether the object is from a Pearson,
 #' Kendall, or Spearman correlation and reports the appropriate correlation
@@ -95,6 +99,10 @@ format_corr <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' With `format_ttest()` you can format t-tests generated from `t.test()` and
 #' `wilcox.test()` output. The default output is APA formatted, but numbers of
 #' digits, leading zeros, the presence of means and confidence intervals,
@@ -206,6 +214,10 @@ format_ttest <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' `format_bf()` can input either a
 #' [{BayesFactor}](https://cran.r-project.org/package=BayesFactor)
 #' object or a vector of Bayes factor values. By default, this function rounds
@@ -322,6 +334,10 @@ format_bf <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' `format_p()` inputs numeric vectors of p-values. Cutoffs can be set that
 #' format the values as less than the cutoffs (e.g., p < 0.001). The default
 #' output is APA formatted, but numbers of digits, cutoffs, leading zeros, and
@@ -400,6 +416,10 @@ format_p <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' `format_summary()` is a general function that allows you to either
 #' automatically calculate mean/median and a measure of error from a data vector
 #' or specify already calculated a mean/median and either an error interval or
@@ -557,8 +577,7 @@ format_summary <- function(x = NULL,
   paste0(full_mean, full_error)
 }
 
-#' @rdname format_mean
-#' @keywords internal
+#' @rdname format_summary
 #' @export
 format_mean <- function(x = NULL,
                         tendency = "mean",

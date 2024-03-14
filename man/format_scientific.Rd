@@ -18,10 +18,14 @@ A character string of a number in scientific notation formatted in Markdown
 or LaTeX.
 }
 \description{
-Format numbers in scientific notation
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
 }
 \examples{
 format_scientific(1111)
 # Control number of digits after decimal with digits
 format_scientific(1111, digits = 3)
 }
+\keyword{internal}

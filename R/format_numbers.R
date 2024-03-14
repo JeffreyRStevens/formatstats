@@ -3,6 +3,9 @@
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
+#'
 #' @param x Number
 #' @param digits Number of digits after the decimal
 #' @param pzero Logical indicator of whether to include leading zero numbers
@@ -38,6 +41,9 @@ format_num <- function(x,
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#'
+#' All functions in this package are deprecated. Please use the
+#' [`{cocoon}`](https://github.com/JeffreyRStevens/cocoon) package instead.
 #'
 #' @param x Number
 #' @param digits Number of digits after the decimal

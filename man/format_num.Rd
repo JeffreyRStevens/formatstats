@@ -19,9 +19,13 @@ A character string formatting the number with specified number of digits
 after the decimal.
 }
 \description{
-Format numbers
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+All functions in this package are deprecated. Please use the
+\href{https://github.com/JeffreyRStevens/cocoon}{\code{{cocoon}}} package instead.
 }
 \examples{
 format_num(pi, digits = 2)
 format_num(pi, digits = 4)
 }
+\keyword{internal}
