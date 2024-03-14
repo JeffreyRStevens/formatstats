@@ -2,6 +2,7 @@
 #'
 #' @encoding UTF-8
 #' @description
+#' `r lifecycle::badge("deprecated")`
 #' With `format_corr()` you can format correlation statistics generated from
 #' `cor.test()` output. This detects whether the object is from a Pearson,
 #' Kendall, or Spearman correlation and reports the appropriate correlation
@@ -24,7 +25,7 @@
 #' A character string of statistical information formatted in Markdown or LaTeX.
 #' @export
 #'
-#' @family functions for printing statistical objects
+#' @keywords internal # @family functions for printing statistical objects
 #'
 #' @examples
 #' # Prepare data
@@ -45,6 +46,7 @@ format_corr <- function(x,
                         ci = TRUE,
                         italics = TRUE,
                         type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_corr()", "cocoon::format_corr()")
   # Check arguments
   stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && grepl("correlation", x$method))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
@@ -92,6 +94,7 @@ format_corr <- function(x,
 #' Format t-test statistics
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
 #' With `format_ttest()` you can format t-tests generated from `t.test()` and
 #' `wilcox.test()` output. The default output is APA formatted, but numbers of
 #' digits, leading zeros, the presence of means and confidence intervals,
@@ -116,7 +119,7 @@ format_corr <- function(x,
 #' A character string of statistical information formatted in Markdown or LaTeX.
 #' @export
 #'
-#' @family functions for printing statistical objects
+#' @keywords internal # @family functions for printing statistical objects
 #'
 #' @examples
 #' # Prepare data
@@ -138,6 +141,7 @@ format_ttest <- function(x,
                          dfs = "par",
                          mean = "abbr",
                          type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_ttest()", "cocoon::format_ttest()")
   # Check arguments
   stopifnot("Input must be a correlation object." = inherits(x, what = "htest") && (grepl("t-test", x$method) | grepl("Wilcoxon", x$method)))
   stopifnot("Argument `digits` must be a non-negative numeric vector." = is.numeric(digits))
@@ -201,6 +205,7 @@ format_ttest <- function(x,
 #' Format Bayes factors
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
 #' `format_bf()` can input either a [BayesFactor] object or a vectors of Bayes
 #' factor values. By default, this function rounds Bayes factors greater than 1
 #' to one decimal place and Bayes factors less than 1 to two decimal places.
@@ -225,7 +230,7 @@ format_ttest <- function(x,
 #' `_BF_~10~ > <cutoff>` or `_BF_~10~ < 1 / <cutoff>` is used.
 #' @export
 #'
-#' @family functions for printing statistical objects
+#' @keywords internal # @family functions for printing statistical objects
 #'
 #' @examples
 #' # Format Bayes factors > 1
@@ -251,6 +256,7 @@ format_bf <- function(x,
                       italics = TRUE,
                       subscript = "10",
                       type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_bf()", "cocoon::format_bf()")
   # Check arguments
   if (is.numeric(x)) {
     bf <- x
@@ -295,6 +301,7 @@ format_bf <- function(x,
 #' Format p-values
 #'
 #' @description
+#' `r lifecycle::badge("deprecated")`
 #' `format_p()` inputs numeric vectors of p-values. Cutoffs can be set that
 #' format the values as less than the cutoffs (e.g., p < 0.001). The default
 #' output is APA formatted, but numbers of digits, cutoffs, leading zeros, and
@@ -314,6 +321,7 @@ format_bf <- function(x,
 #' used.
 #' @export
 #'
+#' @keywords internal
 #' @examples
 #' format_p(0.001)
 #' # Round digits for p-values greater than cutoff
@@ -329,6 +337,7 @@ format_p <- function(x,
                      pzero = FALSE,
                      italics = TRUE,
                      type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_p()", "cocoon::format_p()")
   # Check arguments
   stopifnot("Input must be a numeric vector." = is.numeric(x))
   stopifnot("Argument `pdigits` must be a numeric between 1 and 5." = is.numeric(pdigits))
@@ -360,6 +369,8 @@ format_p <- function(x,
 
 #' Calculate and format mean and error
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
 #' `format_meanerror()` is a general function that allows you to either
 #' automatically calculate mean/median and a measure of error from a data vector
 #' or specify already calculated a mean/median and either an error interval or
@@ -399,6 +410,7 @@ format_p <- function(x,
 #' To return only the mean (no error), set `display = "none"`.
 #' @export
 #'
+#' @keywords internal
 #' @examples
 #' # Print mean and 95% confidence limits for fuel efficiency
 #' format_meanci(mtcars$mpg)
@@ -429,6 +441,7 @@ format_meanerror <- function(x = NULL,
                              cilevel = 0.95,
                              errorlabel = TRUE,
                              type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_meanerror()", "cocoon::format_summary()")
   # Check arguments
   if (!is.null(x)) {
     stopifnot("Argument `x` must be a numeric vector." = is.numeric(x))
@@ -506,6 +519,7 @@ format_meanerror <- function(x = NULL,
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_mean <- function(x = NULL,
                         summary = "mean",
@@ -517,10 +531,12 @@ format_mean <- function(x = NULL,
                         units = NULL,
                         display = "none",
                         type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_mean()", "cocoon::format_mean()")
   format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_meanci <- function(x = NULL,
                           summary = "mean",
@@ -535,10 +551,12 @@ format_meanci <- function(x = NULL,
                           cilevel = 0.95,
                           errorlabel = TRUE,
                           type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_meanci()", "cocoon::format_meanci()")
   format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, cilevel = cilevel, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_meanse <- function(x = NULL,
                           summary = "mean",
@@ -552,10 +570,12 @@ format_meanse <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_meanse()", "cocoon::format_meanse()")
   format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_meansd <- function(x = NULL,
                           summary = "mean",
@@ -569,10 +589,12 @@ format_meansd <- function(x = NULL,
                           display = "par",
                           errorlabel = TRUE,
                           type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_meansd()", "cocoon::format_meansd()")
   format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_median <- function(x = NULL,
                           summary = "median",
@@ -584,10 +606,12 @@ format_median <- function(x = NULL,
                           units = NULL,
                           display = "none",
                           type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_median()", "cocoon::format_median()")
   format_meanerror(x = x, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, type = type)
 }
 
 #' @rdname format_meanerror
+#' @keywords internal
 #' @export
 format_medianiqr <- function(x = NULL,
                              summary = "median",
@@ -601,6 +625,7 @@ format_medianiqr <- function(x = NULL,
                              display = "par",
                              errorlabel = TRUE,
                              type = "md") {
+  lifecycle::deprecate_warn("0.0.0.9000", "format_medianiqr()", "cocoon::format_medianiqr()")
   format_meanerror(x = x, error = error, values = values, digits = digits, meanlabel = meanlabel, italics = italics, subscript = subscript, units = units, display = display, errorlabel = errorlabel, type = type)
 }
 

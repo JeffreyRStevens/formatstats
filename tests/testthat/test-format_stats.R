@@ -9,6 +9,7 @@ test_ttest4 <- suppressWarnings(wilcox.test(df$a, df$b))
 test_ttest5 <- suppressWarnings(wilcox.test(df$a, c(df$b, 120)))
 
 test_that("format_corr works properly", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   suppressMessages(expect_error(format_corr("xxx"),
                                 "Input must be a correlation object"))
   suppressMessages(expect_error(format_corr(test_corr, digits = "xxx"),
@@ -44,6 +45,7 @@ test_that("format_corr works properly", {
 
 
 test_that("format_ttest works properly", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   suppressMessages(expect_error(format_ttest("xxx"),
                                 "Input must be a correlation object"))
   suppressMessages(expect_error(format_ttest(test_ttest, digits = "xxx"),
@@ -87,6 +89,7 @@ test_that("format_ttest works properly", {
 })
 
 test_that("format_bf() works properly", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   suppressMessages(expect_error(format_bf("0.0012"),
                                 "Input is not numeric or of class BFBayesFactor"))
   suppressMessages(expect_error(format_bf(123.4567, digits1 = "xxx"),
@@ -126,6 +129,7 @@ test_that("format_bf() works properly", {
 })
 
 test_that("format_p() works properly", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   suppressMessages(expect_error(format_p("xxx"),
                                 "Input must be a numeric vector"))
   suppressMessages(expect_error(format_p(0.0012, pdigits = "xxx"),
@@ -148,6 +152,7 @@ test_that("format_p() works properly", {
 })
 
 test_that("format_meanerror() works properly", {
+  withr::local_options(lifecycle_verbosity = "quiet")
   suppressMessages(expect_error(format_meanerror(x = "xxx"),
                                 "Argument `x` must be a numeric vector"))
   suppressMessages(expect_error(format_meanerror(error = "xxx"),
@@ -188,3 +193,10 @@ test_that("format_meanerror() works properly", {
   expect_equal(format_meanse(x = 1:10), "_M_ = 5.50 (_SE_ = 0.96)")
 })
 
+test_that("everything is deprecated", {
+  expect_snapshot(format_corr(test_corr))
+  expect_snapshot(format_ttest(test_ttest))
+  expect_snapshot(format_bf(0.1234))
+  expect_snapshot(format_p(0.1234))
+  expect_snapshot(format_meanerror(x = 1:10))
+})
