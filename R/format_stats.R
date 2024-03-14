@@ -295,7 +295,7 @@ format_bf <- function(x,
   if (is.null(cutoff)) {
     bf_value <- dplyr::case_when(
       bf >= 1000 ~ format_scientific(bf, digits = digits1, type = type),
-      bf <= 1 / 10 ^ digits2 ~ format_scientific(bf, digits = digits1, type = type),
+      bf <= 1 / 10^digits2 ~ format_scientific(bf, digits = digits1, type = type),
       bf >= 1 ~ format_num(bf, digits = digits1),
       bf < 1 ~ format_num(bf, digits = digits2)
     )
@@ -303,14 +303,14 @@ format_bf <- function(x,
     bf_value <- dplyr::case_when(
       bf >= cutoff ~ as.character(cutoff),
       bf <= 1 / cutoff ~ as.character(1 / cutoff),
-      bf <= 1 / 10 ^ digits2 ~ as.character(1 / 10 ^ digits2),
+      bf <= 1 / 10^digits2 ~ as.character(1 / 10^digits2),
       bf >= 1 & bf <= cutoff ~ format_num(bf, digits = digits1),
       bf < 1 & bf >= 1 / cutoff ~ format_num(bf, digits = digits2)
     )
     operator <- dplyr::case_when(
       bf > cutoff ~ " > ",
       bf < 1 / cutoff ~ " < ",
-      bf < 1 / 1 / 10 ^ digits2 ~ " < ",
+      bf < 1 / 1 / 10^digits2 ~ " < ",
       .default = operator
     )
   }

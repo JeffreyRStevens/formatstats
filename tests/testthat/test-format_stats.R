@@ -205,5 +205,5 @@ test_that("everything is deprecated", {
   expect_snapshot(format_ttest(test_ttest))
   expect_snapshot(format_bf(0.1234))
   expect_snapshot(format_p(0.1234))
-  expect_snapshot(format_meanerror(x = 1:10))
+  expect_snapshot(format_summary(x = 1:10))
 })
